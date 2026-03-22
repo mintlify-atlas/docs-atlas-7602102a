@@ -1,0 +1,81 @@
+{
+  "projectType": "sdk-library",
+  "projectName": "TSS",
+  "projectDescription": "A zero-config, lightweight utility-first CSS engine with automatic light/dark mode, distributed via CDN or ES module.",
+  "theme": "palm",
+  "primaryColor": "#6366f1",
+  "lightColor": "#eef2ff",
+  "darkColor": "#312e81",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": ["introduction", "quickstart", "installation"]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/utility-classes",
+              "concepts/theming",
+              "concepts/dark-mode",
+              "concepts/semantic-colors"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "reference/spacing",
+              "reference/colors",
+              "reference/typography",
+              "reference/layout",
+              "reference/flexbox-grid",
+              "reference/borders",
+              "reference/effects",
+              "reference/transitions"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "JavaScript API",
+            "pages": [
+              "api/tss-object",
+              "api/parse-class",
+              "api/build-theme-css"
+            ]
+          },
+          {
+            "group": "TypeScript",
+            "pages": [
+              "api/typescript"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Zero-config: auto-initializes on DOMContentLoaded with no build step required",
+    "Automatic light/dark mode via prefers-color-scheme and manual .dark/.light class overrides",
+    "Utility-first class system covering spacing, colors, typography, layout, flexbox, grid, and more",
+    "Semantic color tokens that automatically switch between light and dark values",
+    "CDN-ready IIFE build and ES module export for modern bundlers",
+    "Runtime CSS generation with MutationObserver for dynamic content",
+    "Tailwind-compatible class naming conventions",
+    "TypeScript declarations included"
+  ],
+  "publicApiSurface": [
+    "TSS.version — current library version string",
+    "TSS.refresh() — re-scans DOM and generates any missing utility CSS",
+    "TSS.toggleDark() — toggles dark/light mode and persists to localStorage",
+    "TSS.parse(className) — parses a utility class name and returns { selector, rules }",
+    "parseClass(className) — named export: pure parser function",
+    "buildThemeCSS() — named export: generates the full theme CSS string with CSS custom properties"
+  ]
+}
