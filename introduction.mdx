@@ -1,0 +1,68 @@
+---
+title: Introduction
+description: TSS is a zero-config, lightweight utility-first CSS engine with automatic light/dark mode.
+---
+
+TSS is a runtime CSS engine that reads utility classes directly from your HTML and generates the corresponding CSS on the fly — no build step, no configuration file, no PostCSS pipeline required.
+
+Add a single script tag and start writing classes like `flex`, `p-4`, `text-xl`, and `bg-primary`. TSS handles the rest, including full light and dark mode with semantic color tokens that adapt automatically.
+
+## How it compares to Tailwind
+
+| | TSS | Tailwind CSS |
+|---|---|---|
+| Setup | None — one script tag | Build tool + config file required |
+| CSS generation | Runtime (MutationObserver) | Build-time (PostCSS / CLI) |
+| Dark mode | Automatic, persisted to `localStorage` | Manual `dark:` variant prefix |
+| Bundle size | ~5 kB minified | ~10 kB+ (purged production build) |
+| Custom config | Not required | `tailwind.config.js` required |
+| Semantic color tokens | Built-in (`bg-primary`, `text-heading`) | Requires manual theme extension |
+
+Tailwind is purpose-built for production applications with a full build pipeline. TSS is designed for projects where you want utility-class ergonomics without any tooling overhead — prototypes, static sites, documentation, embedded widgets, and more.
+
+## Key features
+
+<CardGroup cols={2}>
+  <Card title="Zero configuration" icon="bolt">
+    Drop in a script tag and start writing utility classes immediately. No config file, no build step, no CLI.
+  </Card>
+  <Card title="Automatic dark mode" icon="moon">
+    TSS injects a full set of semantic CSS custom properties that switch between light and dark values automatically. Call `TSS.toggleDark()` from any button.
+  </Card>
+  <Card title="Semantic color tokens" icon="palette">
+    Colors like `bg-primary`, `text-heading`, `text-subtle`, and `bg-accent` are defined as CSS variables that adapt to the active theme — no `dark:` prefixes needed.
+  </Card>
+  <Card title="MutationObserver powered" icon="eye">
+    TSS watches the DOM for new elements and class attribute changes. Dynamically injected content is styled instantly without a manual refresh call.
+  </Card>
+  <Card title="Persistent theme preference" icon="database">
+    The active theme is saved to `localStorage` under the key `tss-theme` and restored on every page load before the first paint.
+  </Card>
+  <Card title="CDN and npm ready" icon="package">
+    Use TSS from a CDN with no dependencies, or install from npm and import it into any JavaScript project. Both paths auto-initialize.
+  </Card>
+</CardGroup>
+
+## How TSS works
+
+When the script loads, TSS runs `restoreThemePreference()` to read the saved `tss-theme` value from `localStorage` before the page renders, preventing a flash of the wrong theme.
+
+Once `DOMContentLoaded` fires, TSS:
+
+1. Creates a `<style id="tss-theme">` element containing the full set of CSS custom property definitions for both light and dark mode.
+2. Creates a `<style id="tss-utilities">` element where generated utility rules are appended as they are needed.
+3. Scans `document.body` for all existing class names and generates CSS for any recognized utility classes.
+4. Starts a `MutationObserver` that watches for `childList` changes (subtree) and `class` attribute mutations. When new nodes or class names appear, TSS parses them and appends any missing rules to `#tss-utilities`.
+
+Because rules are only written once and reused thereafter, the generated stylesheet stays compact even on large pages.
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/quickstart">
+    Build a styled page in under 2 minutes using the CDN script tag.
+  </Card>
+  <Card title="Installation" icon="download" href="/installation">
+    All integration methods: CDN, ESM module, npm, and self-hosted.
+  </Card>
+</CardGroup>

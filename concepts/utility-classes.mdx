@@ -1,0 +1,315 @@
+---
+title: 'Utility classes'
+description: 'How TSS parses and generates utility classes at runtime, with a full reference of every supported category.'
+---
+
+TSS utility classes work like Tailwind CSS in naming convention, but with one key difference: there is no build step. TSS parses classes directly in the browser, generates the CSS rule on first use, injects it into a `<style>` element, and caches the result so it is never processed twice.
+
+## How runtime generation works
+
+When the page loads, TSS scans the DOM for class names and calls `parseClass()` on each one. When new elements are added dynamically, a `MutationObserver` picks up the new nodes and processes any classes not yet seen.
+
+<Steps>
+  <Step title="Scan">
+    On script load, TSS walks every element in the document and collects all class tokens.
+  </Step>
+  <Step title="Parse">
+    Each token is passed to `parseClass()`. If it matches a known pattern, a CSS declaration is produced.
+  </Step>
+  <Step title="Inject">
+    The generated rule is appended to the `#tss-utilities` `<style>` element in `<head>`.
+  </Step>
+  <Step title="Cache">
+    The class name is added to an internal `Set`. Any future occurrence of that class skips parsing and injection entirely.
+  </Step>
+  <Step title="Observe">
+    A `MutationObserver` watches for `childList` and `attributes` mutations. New class names found on dynamically added or modified elements go through the same parse → inject → cache pipeline.
+  </Step>
+</Steps>
+
+<Note>
+  Because every class is processed at most once, runtime overhead is negligible for typical UIs. The cache is a plain JavaScript `Set` keyed by the raw class string.
+</Note>
+
+## Class naming syntax
+
+Most classes follow a `{prefix}-{value}` pattern:
+
+```html
+<!-- prefix: p, value: 4 -->
+<div class="p-4">
+
+<!-- prefix: bg, value: blue-500 -->
+<button class="bg-blue-500">
+
+<!-- prefix: text, value: xl -->
+<h2 class="text-xl">
+```
+
+Some classes are standalone keywords with no separator:
+
+```html
+<div class="flex items-center justify-between">
+<span class="hidden">
+<p class="truncate">
+```
+
+### Negative values
+
+Prepend `-` to any spacing or inset class to negate its value:
+
+```html
+<div class="-mt-4">   <!-- margin-top: -1rem -->
+<div class="-top-2">  <!-- top: -0.5rem -->
+<div class="-ml-1">   <!-- margin-left: -0.25rem -->
+```
+
+Negative values are supported for all spacing prefixes (`m-`, `mx-`, `my-`, `mt-`, `mr-`, `mb-`, `ml-`) and all inset classes (`inset-`, `inset-x-`, `inset-y-`, `top-`, `right-`, `bottom-`, `left-`).
+
+## Class categories
+
+<AccordionGroup>
+  <Accordion title="Display">
+    Controls the CSS `display` property.
+
+    | Class | CSS |
+    |---|---|
+    | `block` | `display: block` |
+    | `inline-block` | `display: inline-block` |
+    | `inline` | `display: inline` |
+    | `flex` | `display: flex` |
+    | `inline-flex` | `display: inline-flex` |
+    | `grid` | `display: grid` |
+    | `inline-grid` | `display: inline-grid` |
+    | `hidden` | `display: none` |
+    | `table` | `display: table` |
+    | `table-row` | `display: table-row` |
+    | `table-cell` | `display: table-cell` |
+    | `contents` | `display: contents` |
+  </Accordion>
+
+  <Accordion title="Spacing (padding and margin)">
+    All spacing classes use the prefix + scale pattern. The full value scale is:
+
+    `0`, `px`, `0.5`, `1`, `1.5`, `2`, `2.5`, `3`, `3.5`, `4`, `5`, `6`, `7`, `8`, `9`, `10`, `11`, `12`, `14`, `16`, `20`, `24`, `28`, `32`, `36`, `40`, `44`, `48`, `52`, `56`, `60`, `64`, `72`, `80`, `96`, `auto`, `full`, `screen`, `svh`, `dvh`, `min`, `max`, `fit`
+
+    **Padding prefixes**: `p-`, `px-`, `py-`, `pt-`, `pr-`, `pb-`, `pl-`
+
+    **Margin prefixes**: `m-`, `mx-`, `my-`, `mt-`, `mr-`, `mb-`, `ml-`
+
+    ```html
+    <div class="p-4 mx-auto mt-8 pb-0">
+    ```
+
+    Prepend `-` for negative margins: `-mt-4`, `-mb-2`.
+  </Accordion>
+
+  <Accordion title="Sizing">
+    Width, height, and combined `size`:
+
+    - `w-{n}` — width using the spacing scale
+    - `h-{n}` — height using the spacing scale
+    - `size-{n}` — sets both `width` and `height`
+    - Fractions: `w-1/2`, `w-2/3`, `w-3/4`, etc.
+    - `min-w-{n}`, `min-h-{n}`, `max-h-{n}`
+    - `max-w-{size}` — where size is one of: `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, `7xl`, `full`, `screen`, `min`, `max`, `fit`
+
+    ```html
+    <div class="w-full max-w-4xl mx-auto">
+    <img class="size-12">
+    ```
+  </Accordion>
+
+  <Accordion title="Typography">
+    **Text size**: `text-xs`, `text-sm`, `text-base`, `text-lg`, `text-xl`, `text-2xl`, `text-3xl`, `text-4xl`, `text-5xl`, `text-6xl`, `text-7xl`, `text-8xl`, `text-9xl`
+
+    **Font weight**: `font-thin`, `font-extralight`, `font-light`, `font-normal`, `font-medium`, `font-semibold`, `font-bold`, `font-extrabold`, `font-black`
+
+    **Text align**: `text-left`, `text-center`, `text-right`, `text-justify`, `text-start`, `text-end`
+
+    **Text decoration**: `underline`, `overline`, `line-through`, `no-underline`
+
+    **Text transform**: `uppercase`, `lowercase`, `capitalize`, `normal-case`
+
+    **Font style**: `italic`, `not-italic`
+
+    **Whitespace**: `whitespace-nowrap`, `whitespace-normal`, `whitespace-pre`, `whitespace-pre-wrap`
+
+    **Word break**: `break-words`, `break-all`, `break-normal`, `truncate`
+
+    **Rendering**: `antialiased`
+
+    ```html
+    <h1 class="text-3xl font-bold tracking-tight">
+    <p class="text-sm text-body truncate">
+    ```
+  </Accordion>
+
+  <Accordion title="Colors">
+    Background, text, and border colors all use the same color resolution pipeline (`resolveColor()`).
+
+    - `bg-{color}` — background color
+    - `text-{color}` — text color
+    - `border-{color}` — border color
+
+    **Palette colors**: `{name}-{shade}` where name is one of `slate`, `gray`, `zinc`, `red`, `orange`, `amber`, `yellow`, `lime`, `green`, `emerald`, `teal`, `cyan`, `sky`, `blue`, `indigo`, `violet`, `purple`, `pink`, `rose` and shade is `50`–`950`.
+
+    **Semantic tokens**: `primary`, `secondary`, `tertiary`, `surface`, `base`, `inverse`, `muted`, `heading`, `body`, `subtle`, `disabled`, `link`, `outline`, `divider`, `ring`, `success`, `warning`, `danger`, `info`, `accent` — see [Semantic colors](/concepts/semantic-colors).
+
+    **Special values**: `white`, `black`, `transparent`, `inherit`, `current`
+
+    ```html
+    <div class="bg-surface text-heading border border-outline">
+    <span class="text-danger">Error</span>
+    <button class="bg-blue-600 text-white">
+    ```
+  </Accordion>
+
+  <Accordion title="Flexbox">
+    **Direction**: `flex-row`, `flex-row-reverse`, `flex-col`, `flex-col-reverse`
+
+    **Wrap**: `flex-wrap`, `flex-nowrap`
+
+    **Flex sizing**: `flex-1`, `flex-auto`, `flex-initial`, `flex-none`, `flex-grow`, `flex-grow-0`, `flex-shrink`, `flex-shrink-0`
+
+    **Align items**: `items-start`, `items-end`, `items-center`, `items-baseline`, `items-stretch`
+
+    **Justify content**: `justify-start`, `justify-end`, `justify-center`, `justify-between`, `justify-around`, `justify-evenly`
+
+    **Align self**: `self-auto`, `self-start`, `self-end`, `self-center`, `self-stretch`, `self-baseline`
+
+    ```html
+    <div class="flex items-center justify-between gap-4">
+    ```
+  </Accordion>
+
+  <Accordion title="Grid">
+    **Columns**: `grid-cols-{n}` (n = 1–12), `grid-cols-none`
+
+    **Rows**: `grid-rows-{n}` (n = 1–6), `grid-rows-none`
+
+    **Column span**: `col-span-{n}`, `col-span-full`
+
+    **Row span**: `row-span-{n}`, `row-span-full`
+
+    **Place items**: `place-items-start`, `place-items-end`, `place-items-center`, `place-items-stretch`
+
+    **Place content**: `place-content-start`, `place-content-end`, `place-content-center`, `place-content-between`, `place-content-around`, `place-content-evenly`
+
+    **Gap**: `gap-{n}`, `gap-x-{n}`, `gap-y-{n}` (uses spacing scale)
+
+    ```html
+    <div class="grid grid-cols-3 gap-6">
+      <div class="col-span-2">Wide cell</div>
+      <div>Narrow cell</div>
+    </div>
+    ```
+  </Accordion>
+
+  <Accordion title="Position and inset">
+    **Position**: `static`, `fixed`, `absolute`, `relative`, `sticky`
+
+    **Inset**: `inset-{n}`, `inset-x-{n}`, `inset-y-{n}`, `top-{n}`, `right-{n}`, `bottom-{n}`, `left-{n}` (all use spacing scale; prepend `-` for negative)
+
+    **Z-index**: `z-0`, `z-10`, `z-20`, `z-30`, `z-40`, `z-50`, `z-auto`
+
+    ```html
+    <div class="relative">
+      <div class="absolute top-0 right-0 z-10">Badge</div>
+    </div>
+    ```
+  </Accordion>
+
+  <Accordion title="Borders">
+    **Width**: `border`, `border-0`, `border-2`, `border-4`, `border-8`
+
+    **Side width**: `border-t`, `border-r`, `border-b`, `border-l`, `border-t-2`, `border-r-2`, `border-b-2`, `border-l-2` (and `-4`, `-8` variants)
+
+    **Style**: `border-solid`, `border-dashed`, `border-dotted`, `border-double`, `border-none`
+
+    **Color**: `border-{color}` — same color resolution as `bg-` and `text-`
+
+    **Radius**: `rounded-none`, `rounded-sm`, `rounded`, `rounded-md`, `rounded-lg`, `rounded-xl`, `rounded-2xl`, `rounded-3xl`, `rounded-full`
+
+    **Radius by side/corner**: `rounded-t`, `rounded-b`, `rounded-l`, `rounded-r`, `rounded-tl`, `rounded-tr`, `rounded-bl`, `rounded-br`
+
+    ```html
+    <div class="border border-outline rounded-lg">
+    <hr class="border-t border-divider">
+    ```
+  </Accordion>
+
+  <Accordion title="Shadows">
+    `shadow-sm`, `shadow`, `shadow-md`, `shadow-lg`, `shadow-xl`, `shadow-2xl`, `shadow-none`
+
+    ```html
+    <div class="shadow-md rounded-xl">
+    ```
+  </Accordion>
+
+  <Accordion title="Opacity">
+    `opacity-0`, `opacity-5`, `opacity-10`, `opacity-15`, `opacity-20`, `opacity-25`, `opacity-30`, `opacity-40`, `opacity-50`, `opacity-60`, `opacity-70`, `opacity-75`, `opacity-80`, `opacity-90`, `opacity-95`, `opacity-100`
+
+    ```html
+    <div class="opacity-50">Half transparent</div>
+    ```
+  </Accordion>
+
+  <Accordion title="Transitions and animation">
+    **Property**: `transition`, `transition-all`, `transition-colors`, `transition-opacity`, `transition-shadow`, `transition-transform`, `transition-none`
+
+    **Duration**: `duration-75`, `duration-100`, `duration-150`, `duration-200`, `duration-300`, `duration-500`, `duration-700`, `duration-1000`
+
+    **Easing**: `ease-linear`, `ease-in`, `ease-out`, `ease-in-out`
+
+    ```html
+    <button class="transition-colors duration-200 ease-in-out bg-blue-500 hover:bg-blue-600">
+    ```
+  </Accordion>
+
+  <Accordion title="Overflow">
+    **All axes**: `overflow-auto`, `overflow-hidden`, `overflow-clip`, `overflow-visible`, `overflow-scroll`
+
+    **X axis**: `overflow-x-auto`, `overflow-x-hidden`, `overflow-x-clip`, `overflow-x-visible`, `overflow-x-scroll`
+
+    **Y axis**: `overflow-y-auto`, `overflow-y-hidden`, `overflow-y-clip`, `overflow-y-visible`, `overflow-y-scroll`
+
+    ```html
+    <div class="overflow-y-auto max-h-96">
+    ```
+  </Accordion>
+
+  <Accordion title="Cursor">
+    `cursor-auto`, `cursor-default`, `cursor-pointer`, `cursor-wait`, `cursor-text`, `cursor-move`, `cursor-not-allowed`, `cursor-grab`, `cursor-grabbing`
+
+    ```html
+    <button class="cursor-pointer">
+    <div class="cursor-not-allowed opacity-50">
+    ```
+  </Accordion>
+
+  <Accordion title="Miscellaneous">
+    **User select**: `select-none`, `select-text`, `select-all`, `select-auto`
+
+    **Outline**: `outline-none`, `outline`
+
+    **Lists**: `list-none`, `list-disc`, `list-decimal`
+
+    **Object fit**: `object-cover`, `object-contain`, `object-fill`, `object-none`
+
+    **Resize**: `resize-none`, `resize-x`, `resize-y`, `resize-both` (alias: `resize`)
+
+    **Tables**: `border-collapse`, `border-separate`
+
+    **Accessibility**: `sr-only`, `not-sr-only`
+
+    **Pointer events**: `pointer-events-none`, `pointer-events-auto`
+
+    **Appearance**: `appearance-none`
+
+    ```html
+    <input class="appearance-none outline-none">
+    <span class="sr-only">Screen reader only text</span>
+    ```
+  </Accordion>
+</AccordionGroup>

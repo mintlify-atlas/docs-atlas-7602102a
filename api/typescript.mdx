@@ -1,0 +1,190 @@
+---
+title: 'TypeScript'
+description: 'Type declarations for TSS — interfaces, named exports, and the default export.'
+---
+
+TSS ships with TypeScript declarations in `dist/index.d.ts`. The `package.json` `types` field points to this file automatically:
+
+```json
+{
+  "types": "dist/index.d.ts"
+}
+```
+
+No additional configuration is needed. TypeScript will resolve types for all imports from `tss-css` automatically.
+
+---
+
+## Importing with types
+
+```typescript
+// Default export (TSS object)
+import TSS from 'tss-css';
+
+// Type-only imports
+import type { TSSAPI, ParseResult } from 'tss-css';
+
+// Named function exports
+import { parseClass, buildThemeCSS } from 'tss-css';
+
+// Combined
+import TSS, { parseClass, buildThemeCSS } from 'tss-css';
+import type { TSSAPI, ParseResult } from 'tss-css';
+```
+
+---
+
+## Interfaces
+
+### ParseResult
+
+The return type of `parseClass` and `TSS.parse` when a class is recognized.
+
+```typescript
+export interface ParseResult {
+  selector: string;
+  rules: Record<string, string>;
+}
+```
+
+<ResponseField name="selector" type="string" required>
+  The CSS selector string including the leading `.`. The class name is CSS-escaped (e.g., `.p-4`, `.text-2xl`).
+</ResponseField>
+
+<ResponseField name="rules" type="Record<string, string>" required>
+  A plain object of CSS property names (kebab-case) mapped to their values. A single class can produce multiple properties.
+</ResponseField>
+
+### TSSAPI
+
+The type of the `TSS` default export.
+
+```typescript
+export interface TSSAPI {
+  version:    string;
+  refresh():  void;
+  toggleDark(): boolean;
+  parse(className: string): ParseResult | null;
+}
+```
+
+<ResponseField name="version" type="string" required>
+  Library version string, e.g., `'1.0.0'`.
+</ResponseField>
+
+<ResponseField name="refresh" type="() => void" required>
+  Re-scans `document.body` and flushes pending CSS synchronously.
+</ResponseField>
+
+<ResponseField name="toggleDark" type="() => boolean" required>
+  Toggles dark mode on `<html>`. Returns `true` if now dark, `false` if now light.
+</ResponseField>
+
+<ResponseField name="parse" type="(className: string) => ParseResult | null" required>
+  Parses a single class name. Returns a `ParseResult` or `null` if unrecognized.
+</ResponseField>
+
+---
+
+## Named exports
+
+### parseClass
+
+```typescript
+export declare function parseClass(cls: string): ParseResult | null;
+```
+
+A pure function that parses a single TSS class name into a selector and rules object. Returns `null` for unrecognized classes. See [parseClass reference](/api/parse-class) for full documentation.
+
+### buildThemeCSS
+
+```typescript
+export declare function buildThemeCSS(): string;
+```
+
+Returns the complete TSS theme CSS string. Pure function with no side effects. See [buildThemeCSS reference](/api/build-theme-css) for full documentation.
+
+---
+
+## Default export
+
+```typescript
+declare const TSS: TSSAPI;
+export default TSS;
+```
+
+---
+
+## Full declaration file
+
+For reference, the complete `dist/index.d.ts`:
+
+```typescript
+// TSS v1.0.0 — TypeScript declarations
+
+export interface ParseResult {
+  selector: string;
+  rules: Record<string, string>;
+}
+
+export interface TSSAPI {
+  version:    string;
+  refresh():  void;
+  toggleDark(): boolean;
+  parse(className: string): ParseResult | null;
+}
+
+export declare function parseClass(cls: string): ParseResult | null;
+export declare function buildThemeCSS(): string;
+
+declare const TSS: TSSAPI;
+export default TSS;
+```
+
+---
+
+## Usage examples
+
+### Typed parse result
+
+```typescript
+import TSS from 'tss-css';
+import type { ParseResult } from 'tss-css';
+
+function getRule(cls: string): ParseResult | null {
+  return TSS.parse(cls);
+}
+
+const result = getRule('p-4');
+if (result !== null) {
+  // TypeScript knows result.selector and result.rules are defined here
+  console.log(result.selector); // '.p-4'
+  console.log(result.rules);    // { 'padding': '1rem' }
+}
+```
+
+### Typed dark mode toggle
+
+```typescript
+import TSS from 'tss-css';
+
+function handleThemeToggle(): void {
+  const isDark: boolean = TSS.toggleDark();
+  document.querySelector('#toggle-btn')!.textContent =
+    isDark ? 'Switch to light' : 'Switch to dark';
+}
+```
+
+### Named exports in build scripts
+
+```typescript
+import { parseClass, buildThemeCSS } from 'tss-css';
+import type { ParseResult } from 'tss-css';
+
+const classes = ['p-4', 'text-xl', 'bg-blue-500'];
+const results: ParseResult[] = classes
+  .map(parseClass)
+  .filter((r): r is ParseResult => r !== null);
+
+const theme: string = buildThemeCSS();
+```

@@ -1,0 +1,146 @@
+---
+title: 'buildThemeCSS'
+description: 'Pure function that returns the complete TSS theme CSS string including resets, defaults, and light/dark mode variables.'
+---
+
+## Signature
+
+```typescript
+buildThemeCSS(): string
+```
+
+## Overview
+
+`buildThemeCSS` is a pure function with no side effects. It returns a complete, self-contained CSS string that covers resets, HTML and body defaults, and all theme variables for light mode, dark mode (via media query), and manually toggled dark/light modes.
+
+Call it to obtain the theme CSS and inject it yourself — for SSR, custom integrations, or any environment where TSS's auto-init path is not suitable.
+
+---
+
+## Return value
+
+<ResponseField name="(return value)" type="string" required>
+  A complete CSS string ready to inject into a `<style>` element or write to a `.css` file. The string is not minified.
+</ResponseField>
+
+---
+
+## Output structure
+
+The returned CSS string contains seven sections in order:
+
+| # | Section | Description |
+|---|---|---|
+| 1 | Base reset | `*, *::before, *::after { box-sizing: border-box }` |
+| 2 | HTML defaults | `text-size-adjust`, `tab-size`, system font stack |
+| 3 | Body defaults | `background-color: var(--tss-base)`, `color: var(--tss-body)`, `transition: 0.2s ease` |
+| 4 | Light mode vars | `:root { --tss-primary: ...; ... }` — all 19 theme tokens |
+| 5 | Dark auto | `@media (prefers-color-scheme: dark) { :root { ... } }` — system dark mode |
+| 6 | Manual dark | `html.dark { ... }` — toggled via `TSS.toggleDark()` |
+| 7 | Manual light | `html.light { ... }` — explicit light override |
+
+<Note>Sections 5, 6, and 7 all redefine the same CSS custom properties as section 4, but with dark-mode values. Section 5 responds to the OS preference. Sections 6 and 7 override the OS preference when a class is present on `<html>`.</Note>
+
+---
+
+## Generated CSS snippet
+
+The output looks like this (abbreviated):
+
+```css
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  tab-size: 4;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background-color: var(--tss-base);
+  color: var(--tss-body);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+:root {
+  --tss-primary: #3b82f6;
+  --tss-secondary: #8b5cf6;
+  /* ...all 19 tokens */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tss-primary: #60a5fa;
+    /* ...dark values */
+  }
+}
+
+html.dark {
+  --tss-primary: #60a5fa;
+  /* ...dark values */
+}
+
+html.light {
+  --tss-primary: #3b82f6;
+  /* ...light values */
+}
+```
+
+---
+
+## Usage
+
+### Manual injection (browser)
+
+```javascript
+import { buildThemeCSS } from 'tss-css';
+
+const style = document.createElement('style');
+style.textContent = buildThemeCSS();
+document.head.prepend(style); // prepend so utility classes can override
+```
+
+### SSR — inject before hydration
+
+Inject the theme CSS into the `<head>` on the server to prevent a flash of unstyled content:
+
+```javascript
+import { buildThemeCSS } from 'tss-css';
+
+function renderPage(content) {
+  const themeCSS = buildThemeCSS();
+  return `<!DOCTYPE html>
+<html>
+<head>
+  <style>${themeCSS}</style>
+</head>
+<body>${content}</body>
+</html>`;
+}
+```
+
+### Write to a static file
+
+```javascript
+import { buildThemeCSS } from 'tss-css';
+import { writeFileSync } from 'fs';
+
+writeFileSync('dist/theme.css', buildThemeCSS());
+```
+
+### Auto-init path
+
+When loaded via the CDN `<script>` tag, TSS calls `buildThemeCSS()` automatically and injects the result into the document. If you are using TSS through npm and want the same automatic behavior, call it once at module initialization:
+
+```javascript
+import TSS, { buildThemeCSS } from 'tss-css';
+
+// Inject theme on load
+const style = document.createElement('style');
+style.textContent = buildThemeCSS();
+document.head.prepend(style);
+```
+
+<Tip>Always inject the theme CSS before any utility classes. Prepending to `<head>` ensures utility class rules declared later in the document can override theme defaults without needing higher specificity.</Tip>

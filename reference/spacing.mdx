@@ -1,0 +1,266 @@
+---
+title: 'Spacing'
+description: 'Padding, margin, width, height, gap, and positioning utilities built on a consistent rem-based scale.'
+---
+
+TSS uses a consistent rem-based spacing scale shared across padding, margin, width, height, gap, and positioning utilities. Most values map to multiples of `0.25rem` (4px), with additional named values for common use cases.
+
+## Spacing scale
+
+The base scale applies to all spacing utilities unless otherwise noted.
+
+| Key | rem value | px equivalent |
+|-----|-----------|---------------|
+| `0` | `0` | 0px |
+| `px` | `1px` | 1px |
+| `0.5` | `0.125rem` | 2px |
+| `1` | `0.25rem` | 4px |
+| `1.5` | `0.375rem` | 6px |
+| `2` | `0.5rem` | 8px |
+| `2.5` | `0.625rem` | 10px |
+| `3` | `0.75rem` | 12px |
+| `3.5` | `0.875rem` | 14px |
+| `4` | `1rem` | 16px |
+| `5` | `1.25rem` | 20px |
+| `6` | `1.5rem` | 24px |
+| `7` | `1.75rem` | 28px |
+| `8` | `2rem` | 32px |
+| `9` | `2.25rem` | 36px |
+| `10` | `2.5rem` | 40px |
+| `11` | `2.75rem` | 44px |
+| `12` | `3rem` | 48px |
+| `14` | `3.5rem` | 56px |
+| `16` | `4rem` | 64px |
+| `20` | `5rem` | 80px |
+| `24` | `6rem` | 96px |
+| `28` | `7rem` | 112px |
+| `32` | `8rem` | 128px |
+| `36` | `9rem` | 144px |
+| `40` | `10rem` | 160px |
+| `44` | `11rem` | 176px |
+| `48` | `12rem` | 192px |
+| `52` | `13rem` | 208px |
+| `56` | `14rem` | 224px |
+| `60` | `15rem` | 240px |
+| `64` | `16rem` | 256px |
+| `72` | `18rem` | 288px |
+| `80` | `20rem` | 320px |
+| `96` | `24rem` | 384px |
+
+See [special values](#special-values) for `auto`, `full`, `screen`, and content-sizing keywords.
+
+## Padding
+
+All padding utilities accept any key from the spacing scale.
+
+| Utility | CSS property | Example |
+|---------|-------------|--------|
+| `p-{n}` | `padding` | `p-4` |
+| `px-{n}` | `padding-left` + `padding-right` | `px-6` |
+| `py-{n}` | `padding-top` + `padding-bottom` | `py-2` |
+| `pt-{n}` | `padding-top` | `pt-8` |
+| `pr-{n}` | `padding-right` | `pr-3` |
+| `pb-{n}` | `padding-bottom` | `pb-4` |
+| `pl-{n}` | `padding-left` | `pl-2` |
+
+```html
+<!-- Uniform padding of 1rem -->
+<div class="p-4">...</div>
+
+<!-- Horizontal padding of 1.5rem, vertical padding of 0.5rem -->
+<div class="px-6 py-2">...</div>
+
+<!-- Individual sides -->
+<div class="pt-8 pb-4 pl-2 pr-3">...</div>
+```
+
+## Margin
+
+Margin utilities follow the same prefix pattern. They also support `auto` for centering.
+
+| Utility | CSS property | Example |
+|---------|-------------|--------|
+| `m-{n}` | `margin` | `m-4` |
+| `mx-{n}` | `margin-left` + `margin-right` | `mx-auto` |
+| `my-{n}` | `margin-top` + `margin-bottom` | `my-6` |
+| `mt-{n}` | `margin-top` | `mt-8` |
+| `mr-{n}` | `margin-right` | `mr-2` |
+| `mb-{n}` | `margin-bottom` | `mb-4` |
+| `ml-{n}` | `margin-left` | `ml-3` |
+
+```html
+<!-- Center a block element horizontally -->
+<div class="mx-auto w-96">...</div>
+
+<!-- Vertical spacing between sections -->
+<section class="my-12">...</section>
+
+<!-- Remove top margin -->
+<h2 class="mt-0">...</h2>
+```
+
+<Tip>
+  Use `mx-auto` on a block element with a fixed width to center it horizontally within its container.
+</Tip>
+
+## Width and height
+
+`w-*`, `h-*`, and `size-*` utilities use the spacing scale plus fraction and special values.
+
+| Utility | CSS property | Example |
+|---------|-------------|--------|
+| `w-{n}` | `width` | `w-32` |
+| `h-{n}` | `height` | `h-16` |
+| `size-{n}` | `width` + `height` | `size-8` |
+
+### Fraction support
+
+`w-*` and `h-*` accept fractional values for percentage-based sizing:
+
+| Class | Value |
+|-------|-------|
+| `w-1/2` | `50%` |
+| `w-1/3` | `33.333%` |
+| `w-2/3` | `66.667%` |
+| `w-1/4` | `25%` |
+| `w-3/4` | `75%` |
+| `w-1/5` | `20%` |
+| `w-2/5` | `40%` |
+| `w-3/5` | `60%` |
+| `w-4/5` | `80%` |
+
+```html
+<!-- Fixed width from scale -->
+<div class="w-64 h-32">...</div>
+
+<!-- Half width, full height -->
+<div class="w-1/2 h-full">...</div>
+
+<!-- Square element using size shorthand -->
+<div class="size-12">...</div>
+```
+
+## Max-width
+
+`max-w-{key}` uses a named scale optimized for readable content widths.
+
+| Key | Value |
+|-----|-------|
+| `none` | `none` |
+| `xs` | `20rem` (320px) |
+| `sm` | `24rem` (384px) |
+| `md` | `28rem` (448px) |
+| `lg` | `32rem` (512px) |
+| `xl` | `36rem` (576px) |
+| `2xl` | `42rem` (672px) |
+| `3xl` | `48rem` (768px) |
+| `4xl` | `56rem` (896px) |
+| `5xl` | `64rem` (1024px) |
+| `6xl` | `72rem` (1152px) |
+| `7xl` | `80rem` (1280px) |
+| `full` | `100%` |
+| `screen` | `100vw` |
+| `min` | `min-content` |
+| `max` | `max-content` |
+| `fit` | `fit-content` |
+
+```html
+<!-- Constrain content to readable width, centered -->
+<article class="max-w-3xl mx-auto">...</article>
+
+<!-- Full viewport width container -->
+<header class="max-w-screen">...</header>
+```
+
+## Gap
+
+Gap utilities apply to flex and grid containers using the spacing scale.
+
+| Utility | CSS property | Example |
+|---------|-------------|--------|
+| `gap-{n}` | `gap` | `gap-4` |
+| `gap-x-{n}` | `column-gap` | `gap-x-6` |
+| `gap-y-{n}` | `row-gap` | `gap-y-2` |
+
+```html
+<!-- Uniform gap in a grid -->
+<div class="grid gap-4">...</div>
+
+<!-- Different horizontal and vertical gaps -->
+<div class="flex flex-wrap gap-x-6 gap-y-2">...</div>
+```
+
+## Positioning
+
+Positional utilities use the spacing scale and support negative values.
+
+| Utility | CSS property | Example |
+|---------|-------------|--------|
+| `top-{n}` | `top` | `top-4` |
+| `right-{n}` | `right` | `right-0` |
+| `bottom-{n}` | `bottom` | `bottom-8` |
+| `left-{n}` | `left` | `left-2` |
+| `inset-{n}` | `inset` | `inset-0` |
+| `inset-x-{n}` | `left` + `right` | `inset-x-0` |
+| `inset-y-{n}` | `top` + `bottom` | `inset-y-0` |
+
+### Negative values
+
+Prefix any spacing key with `-` to apply a negative value:
+
+```html
+<!-- Negative margin to pull element upward -->
+<div class="-mt-4">...</div>
+
+<!-- Pull absolutely positioned element outside its container -->
+<div class="relative">
+  <div class="absolute -top-2 -left-2">...</div>
+</div>
+```
+
+<Note>
+  Negative values work with margin and positional utilities (`top`, `right`, `bottom`, `left`, `inset`, `inset-x`, `inset-y`). They are not supported on padding or gap.
+</Note>
+
+## Min/max sizing
+
+| Utility | CSS property | Example |
+|---------|-------------|--------|
+| `min-w-{n}` | `min-width` | `min-w-0` |
+| `min-h-{n}` | `min-height` | `min-h-screen` |
+| `max-h-{n}` | `max-height` | `max-h-96` |
+
+```html
+<!-- Minimum height of full viewport -->
+<main class="min-h-screen">...</main>
+
+<!-- Prevent element from shrinking below 0 in flex -->
+<div class="min-w-0 truncate">Long content...</div>
+```
+
+## Special values
+
+These named values are available on width, height, and most spacing utilities where applicable:
+
+| Key | Value | Description |
+|-----|-------|-------------|
+| `auto` | `auto` | Browser-determined sizing (margin centering, natural height) |
+| `full` | `100%` | Full size of parent container |
+| `screen` | `100vh` / `100vw` | Full viewport dimension |
+| `svh` | `100svh` | Small viewport height (mobile-safe) |
+| `dvh` | `100dvh` | Dynamic viewport height (adjusts for browser chrome) |
+| `min` | `min-content` | Shrinks to smallest possible size |
+| `max` | `max-content` | Expands to fit all content without wrapping |
+| `fit` | `fit-content` | Uses available space up to `max-content` |
+
+```html
+<!-- Full viewport height, dynamic variant for mobile -->
+<div class="h-dvh">...</div>
+
+<!-- Width that fits content without wrapping -->
+<button class="w-max">Label</button>
+```
+
+<Tip>
+  Prefer `h-dvh` over `h-screen` for full-height layouts on mobile, since `dvh` accounts for the dynamic browser toolbar.
+</Tip>

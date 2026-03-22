@@ -1,0 +1,176 @@
+---
+title: Borders
+description: Border width, radius, style, and color utilities for adding and styling borders.
+---
+
+## Default border
+
+Applying `border` to an element sets all three border properties at once:
+
+- `border-width: 1px`
+- `border-style: solid`
+- `border-color: var(--tss-outline)`
+
+This is the starting point for most bordered components. Add modifier classes to adjust width, style, or color.
+
+## Border width
+
+### All sides
+
+| Class | CSS |
+|---|---|
+| `border` | `border-width: 1px` (+ solid + outline color) |
+| `border-0` | `border-width: 0` |
+| `border-2` | `border-width: 2px` |
+| `border-4` | `border-width: 4px` |
+| `border-8` | `border-width: 8px` |
+
+### Individual sides
+
+Apply a 1px border to a single side with `border-t`, `border-r`, `border-b`, or `border-l`. Combine with a width modifier to change the thickness.
+
+| Class | CSS |
+|---|---|
+| `border-t` | `border-top-width: 1px` |
+| `border-r` | `border-right-width: 1px` |
+| `border-b` | `border-bottom-width: 1px` |
+| `border-l` | `border-left-width: 1px` |
+| `border-t-2` | `border-top-width: 2px` |
+| `border-t-4` | `border-top-width: 4px` |
+| `border-t-8` | `border-top-width: 8px` |
+| `border-r-2` | `border-right-width: 2px` |
+| `border-r-4` | `border-right-width: 4px` |
+| `border-r-8` | `border-right-width: 8px` |
+| `border-b-2` | `border-bottom-width: 2px` |
+| `border-b-4` | `border-bottom-width: 4px` |
+| `border-b-8` | `border-bottom-width: 8px` |
+| `border-l-2` | `border-left-width: 2px` |
+| `border-l-4` | `border-left-width: 4px` |
+| `border-l-8` | `border-left-width: 8px` |
+
+## Border radius
+
+Round the corners of an element.
+
+### All corners
+
+| Class | Value | CSS |
+|---|---|---|
+| `rounded-none` | none | `border-radius: 0` |
+| `rounded-sm` | sm | `border-radius: 0.125rem` |
+| `rounded` | (default) | `border-radius: 0.25rem` |
+| `rounded-md` | md | `border-radius: 0.375rem` |
+| `rounded-lg` | lg | `border-radius: 0.5rem` |
+| `rounded-xl` | xl | `border-radius: 0.75rem` |
+| `rounded-2xl` | 2xl | `border-radius: 1rem` |
+| `rounded-3xl` | 3xl | `border-radius: 1.5rem` |
+| `rounded-full` | full | `border-radius: 9999px` |
+
+<Note>
+`rounded-full` produces a perfect circle on square elements and a pill shape on rectangular ones.
+</Note>
+
+### Specific sides and corners
+
+| Pattern | Corners affected |
+|---|---|
+| `rounded-t-{size}` | `border-top-left-radius` + `border-top-right-radius` |
+| `rounded-b-{size}` | `border-bottom-left-radius` + `border-bottom-right-radius` |
+| `rounded-l-{size}` | `border-top-left-radius` + `border-bottom-left-radius` |
+| `rounded-r-{size}` | `border-top-right-radius` + `border-bottom-right-radius` |
+| `rounded-tl-{size}` | `border-top-left-radius` |
+| `rounded-tr-{size}` | `border-top-right-radius` |
+| `rounded-bl-{size}` | `border-bottom-left-radius` |
+| `rounded-br-{size}` | `border-bottom-right-radius` |
+
+All size values from the table above apply (`sm`, `md`, `lg`, etc.).
+
+## Border style
+
+Control the line style of a border.
+
+| Class | CSS |
+|---|---|
+| `border-solid` | `border-style: solid` |
+| `border-dashed` | `border-style: dashed` |
+| `border-dotted` | `border-style: dotted` |
+| `border-double` | `border-style: double` |
+| `border-none` | `border-style: none` |
+
+<Note>
+The `border` shorthand sets `border-style: solid` automatically. Use `border-none` to remove a border that was applied by a default style.
+</Note>
+
+## Border color
+
+Use `border-{color}` to set the border color. The color resolution follows the same rules as `bg-*` and `text-*` — semantic tokens are resolved first, then palette colors.
+
+```
+border-outline       → var(--tss-outline)
+border-divider       → var(--tss-divider)
+border-danger        → var(--tss-danger)
+border-blue-200      → palette blue-200
+border-neutral-300   → palette neutral-300
+```
+
+Semantic tokens such as `outline` and `divider` adapt to light and dark mode automatically.
+
+## Examples
+
+```html card with border
+<div class="bg-surface border rounded-lg p-6">
+  <h2 class="font-semibold text-lg mb-2">Card title</h2>
+  <p class="text-muted">Card body content goes here.</p>
+</div>
+```
+
+```html pill badge
+<span class="inline-block border border-outline rounded-full px-3 py-1 text-sm">
+  New
+</span>
+
+<!-- Filled color variant -->
+<span class="inline-block bg-primary text-white rounded-full px-3 py-1 text-sm">
+  Featured
+</span>
+```
+
+```html input field styling
+<label class="block">
+  <span class="text-sm font-medium">Email</span>
+  <input
+    type="email"
+    class="mt-1 block w-full border border-outline rounded-md px-3 py-2 focus:border-primary focus:outline-none"
+    placeholder="you@example.com"
+  />
+</label>
+```
+
+```html left-bordered callout / blockquote
+<blockquote class="border-l-4 border-primary pl-4 text-muted italic">
+  Design is not just what it looks like. Design is how it works.
+</blockquote>
+```
+
+```html avatar with status ring
+<div class="inline-block">
+  <img
+    src="/avatar.jpg"
+    alt="User avatar"
+    class="w-12 h-12 rounded-full border-2 border-success"
+  />
+</div>
+```
+
+```html segmented input group (joined borders)
+<div class="flex">
+  <input
+    type="text"
+    class="flex-1 border border-outline rounded-l-md px-3 py-2 focus:outline-none"
+    placeholder="Search..."
+  />
+  <button class="border border-l-0 border-outline rounded-r-md px-4 py-2 bg-surface">
+    Go
+  </button>
+</div>
+```

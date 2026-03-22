@@ -1,0 +1,135 @@
+---
+title: 'Semantic colors'
+description: 'A design token layer that maps meaningful names like surface, heading, and danger to the right color in light and dark mode automatically.'
+---
+
+Palette colors like `blue-500` describe what a color looks like. Semantic colors describe what a color *means*. Using `text-heading` instead of `text-gray-900` means the heading color automatically becomes the right value in both light and dark mode without any extra work.
+
+## How semantic tokens work
+
+Each semantic token is a CSS custom property in the `--tss-{name}` namespace. TSS defines two values for each token — one for light mode and one for dark mode — and switches between them using a media query and manual class selectors.
+
+When you write `bg-surface`, TSS generates:
+
+```css
+.bg-surface { background-color: var(--tss-surface); }
+```
+
+The `--tss-surface` property resolves to the correct color based on the active mode. Your markup stays unchanged; the CSS variables do the work.
+
+## Full token reference
+
+| Token | Light value | Dark value | Typical use |
+|---|---|---|---|
+| `primary` | `white` | `zinc-950` | Primary background or foreground surfaces |
+| `secondary` | `gray-100` | `zinc-900` | Secondary surfaces, sidebars |
+| `tertiary` | `gray-200` | `zinc-800` | Tertiary surfaces, nested sections |
+| `surface` | `white` | `zinc-900` | Card and dialog backgrounds |
+| `base` | `gray-50` | `zinc-950` | Page background (`<body>` default) |
+| `inverse` | `gray-900` | `gray-50` | Inverted surfaces (dark on light, light on dark) |
+| `muted` | `gray-100` | `zinc-800` | Subtle fill for badges, tags, inputs |
+| `heading` | `gray-900` | `gray-50` | Heading text |
+| `body` | `gray-700` | `gray-300` | Body text (`<body>` default) |
+| `subtle` | `gray-500` | `gray-400` | Placeholder, captions, secondary labels |
+| `disabled` | `gray-400` | `zinc-600` | Disabled text and icons |
+| `link` | `blue-600` | `blue-400` | Hyperlink text |
+| `outline` | `gray-200` | `zinc-700` | Input borders, card borders |
+| `divider` | `gray-200` | `zinc-800` | Horizontal rules, section dividers |
+| `ring` | `blue-500` | `blue-400` | Focus rings |
+| `success` | `green-600` | `green-400` | Success states |
+| `warning` | `amber-500` | `amber-400` | Warning states |
+| `danger` | `red-600` | `red-400` | Error and destructive states |
+| `info` | `blue-600` | `blue-400` | Informational states |
+| `accent` | `indigo-600` | `indigo-400` | Brand accent, CTAs, highlighted UI |
+
+## Using tokens in utility classes
+
+Any class that accepts a color resolves semantic token names:
+
+```html
+<!-- Background colors -->
+<div class="bg-surface">
+<div class="bg-muted">
+<div class="bg-base">
+
+<!-- Text colors -->
+<h1 class="text-heading">
+<p class="text-body">
+<span class="text-subtle">
+<a class="text-link">
+
+<!-- Border colors -->
+<div class="border border-outline">
+<hr class="border-t border-divider">
+```
+
+## Overriding individual tokens
+
+Redefine any `--tss-` custom property in your own stylesheet to change a token without touching the others:
+
+```css
+:root {
+  --tss-accent: #0ea5e9;   /* sky-500 instead of indigo-600 */
+  --tss-link: #0ea5e9;
+}
+```
+
+To override a token in dark mode only:
+
+```css
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tss-accent: #38bdf8;  /* sky-400 */
+  }
+}
+
+html.dark {
+  --tss-accent: #38bdf8;
+}
+```
+
+Include both blocks to cover automatic and manual dark mode triggers. See [Dark mode](/concepts/dark-mode) for how TSS resolves the two mechanisms.
+
+## Complete card example
+
+This card uses only semantic color tokens. Switch between light and dark mode and every color updates correctly with no changes to the HTML.
+
+```html
+<div class="bg-surface border border-outline rounded-xl shadow-md p-6 max-w-sm">
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-heading text-lg font-semibold">Invoice #1042</h2>
+    <span class="bg-success text-white text-xs font-medium px-2.5 py-0.5 rounded-full">
+      Paid
+    </span>
+  </div>
+
+  <!-- Body -->
+  <p class="text-body text-sm mb-6">
+    Due date: <span class="text-subtle">March 31, 2026</span>
+  </p>
+
+  <!-- Divider -->
+  <hr class="border-t border-divider mb-6">
+
+  <!-- Amount row -->
+  <div class="flex justify-between items-baseline">
+    <span class="text-subtle text-sm">Total</span>
+    <span class="text-heading text-xl font-bold">$240.00</span>
+  </div>
+
+  <!-- Actions -->
+  <div class="flex gap-3 mt-6">
+    <button class="flex-1 bg-accent text-white rounded-lg py-2 text-sm font-medium cursor-pointer">
+      Download PDF
+    </button>
+    <button class="flex-1 bg-muted text-body rounded-lg py-2 text-sm font-medium cursor-pointer">
+      View details
+    </button>
+  </div>
+</div>
+```
+
+<Note>
+  Notice that nowhere in this example is a raw palette color used. Every color is a semantic token, so the card is fully theme-aware by construction.
+</Note>

@@ -1,0 +1,128 @@
+---
+title: 'Transitions'
+description: 'Transition presets, duration utilities, and easing functions for smooth CSS animations.'
+---
+
+## Transition presets
+
+All transition presets apply a default duration of `150ms` and the `cubic-bezier(0.4, 0, 0.2, 1)` timing function unless overridden.
+
+| Class | transition-property |
+|---|---|
+| `transition` | `color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter` |
+| `transition-all` | `all` |
+| `transition-colors` | `color, background-color, border-color, text-decoration-color, fill, stroke` |
+| `transition-opacity` | `opacity` |
+| `transition-shadow` | `box-shadow` |
+| `transition-transform` | `transform` |
+| `transition-none` | `none` |
+
+<Note>All presets except `transition-none` include the default easing function `cubic-bezier(0.4, 0, 0.2, 1)` and a `150ms` duration. Override these with `duration-{ms}` and `ease-*` utilities.</Note>
+
+The default `transition` preset is intentionally broad — it covers most properties you'd want to animate on interactive elements. Use the more specific presets (`transition-colors`, `transition-opacity`, `transition-transform`) when you want to limit what animates.
+
+---
+
+## Duration
+
+Set the transition duration with `duration-{ms}`. Any positive integer is valid — TSS parses the number and outputs the corresponding `transition-duration` value.
+
+```
+duration-{ms}  →  transition-duration: {ms}ms
+```
+
+Examples:
+
+| Class | transition-duration |
+|---|---|
+| `duration-75` | `75ms` |
+| `duration-100` | `100ms` |
+| `duration-150` | `150ms` (default) |
+| `duration-200` | `200ms` |
+| `duration-300` | `300ms` |
+| `duration-500` | `500ms` |
+| `duration-700` | `700ms` |
+| `duration-1000` | `1000ms` |
+
+<Tip>Use `duration-300` for most UI transitions. Reserve `duration-500` or longer for attention-drawing animations like modals and page transitions.</Tip>
+
+---
+
+## Easing functions
+
+Override the default timing function with an `ease-*` utility.
+
+| Class | CSS value | Description |
+|---|---|---|
+| `ease-linear` | `linear` | Constant speed, no acceleration |
+| `ease-in` | `cubic-bezier(0.4, 0, 1, 1)` | Starts slow, accelerates toward end |
+| `ease-out` | `cubic-bezier(0, 0, 0.2, 1)` | Starts fast, decelerates toward end |
+| `ease-in-out` | `cubic-bezier(0.4, 0, 0.2, 1)` | Slow start and end, faster in middle |
+
+`ease-in-out` is the default easing applied by all transition presets.
+
+---
+
+## Combining transitions
+
+Stack the transition preset, duration, and easing utilities on the same element:
+
+```html
+<div class="transition duration-300 ease-in-out">
+  Smooth 300ms ease-in-out transition
+</div>
+```
+
+```html
+<div class="transition-colors duration-200 ease-out">
+  Color changes only, 200ms, ease-out
+</div>
+```
+
+Use `transition-none` to disable all transitions — useful for users who prefer reduced motion or for resetting inherited transitions:
+
+```html
+<div class="transition-none">
+  No transitions applied
+</div>
+```
+
+---
+
+## Code examples
+
+### Button hover effect
+
+```html
+<button class="bg-blue-500 transition-colors duration-150 ease-in-out hover:bg-blue-600">
+  Hover me
+</button>
+```
+
+### Card shadow animation
+
+```html
+<div class="shadow-sm transition-shadow duration-200 ease-out hover:shadow-md">
+  Card content
+</div>
+```
+
+### Fade-in pattern
+
+Combine `opacity-0` with `transition-opacity` to create a fade-in effect when a class is toggled:
+
+```html
+<!-- Start hidden -->
+<div id="toast" class="opacity-0 transition-opacity duration-300 ease-in-out">
+  Saved successfully
+</div>
+```
+
+```javascript
+// Fade in by removing opacity-0 and adding opacity-100
+const toast = document.getElementById('toast');
+toast.classList.remove('opacity-0');
+toast.classList.add('opacity-100');
+```
+
+<Tip>When building fade transitions, ensure the element remains in the DOM during the transition. Removing the element immediately cancels the animation.</Tip>

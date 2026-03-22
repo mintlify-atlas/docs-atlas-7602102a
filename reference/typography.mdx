@@ -1,0 +1,210 @@
+---
+title: 'Typography'
+description: 'Font size, weight, alignment, decoration, transform, and text utility classes for controlling typographic presentation.'
+---
+
+TSS includes a complete set of typography utilities covering font size, weight, alignment, decoration, transform, and text overflow.
+
+## Default font stack
+
+The TSS theme applies the following system font stack by default:
+
+```css
+font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+  "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+```
+
+This stack prioritizes native system fonts for performance and visual consistency across platforms.
+
+## Font size
+
+Use `text-{key}` to set both `font-size` and `line-height` simultaneously.
+
+| Key | Font size | Line height | Class |
+|-----|-----------|-------------|-------|
+| `xs` | `0.75rem` (12px) | `1rem` (16px) | `text-xs` |
+| `sm` | `0.875rem` (14px) | `1.25rem` (20px) | `text-sm` |
+| `base` | `1rem` (16px) | `1.5rem` (24px) | `text-base` |
+| `lg` | `1.125rem` (18px) | `1.75rem` (28px) | `text-lg` |
+| `xl` | `1.25rem` (20px) | `1.75rem` (28px) | `text-xl` |
+| `2xl` | `1.5rem` (24px) | `2rem` (32px) | `text-2xl` |
+| `3xl` | `1.875rem` (30px) | `2.25rem` (36px) | `text-3xl` |
+| `4xl` | `2.25rem` (36px) | `2.5rem` (40px) | `text-4xl` |
+| `5xl` | `3rem` (48px) | `1` (unitless) | `text-5xl` |
+| `6xl` | `3.75rem` (60px) | `1` (unitless) | `text-6xl` |
+| `7xl` | `4.5rem` (72px) | `1` (unitless) | `text-7xl` |
+| `8xl` | `6rem` (96px) | `1` (unitless) | `text-8xl` |
+| `9xl` | `8rem` (128px) | `1` (unitless) | `text-9xl` |
+
+<Note>
+  Sizes `5xl` and above use a unitless line-height of `1`, meaning the line height equals the font size exactly. This is appropriate for large display headings.
+</Note>
+
+```html
+<!-- Body text -->
+<p class="text-base">Paragraph content.</p>
+
+<!-- Section heading -->
+<h2 class="text-2xl">Section title</h2>
+
+<!-- Display heading -->
+<h1 class="text-6xl">Hero text</h1>
+
+<!-- Helper/label text -->
+<span class="text-xs">Required</span>
+```
+
+## Font weight
+
+Use `font-{key}` to set `font-weight`.
+
+| Key | Value | Class |
+|-----|-------|-------|
+| `thin` | `100` | `font-thin` |
+| `extralight` | `200` | `font-extralight` |
+| `light` | `300` | `font-light` |
+| `normal` | `400` | `font-normal` |
+| `medium` | `500` | `font-medium` |
+| `semibold` | `600` | `font-semibold` |
+| `bold` | `700` | `font-bold` |
+| `extrabold` | `800` | `font-extrabold` |
+| `black` | `900` | `font-black` |
+
+```html
+<p class="font-normal">Regular body text.</p>
+<p class="font-medium">Slightly emphasized.</p>
+<strong class="font-semibold">Subheading weight.</strong>
+<h1 class="font-bold">Bold heading.</h1>
+```
+
+## Text alignment
+
+| Class | CSS value |
+|-------|-----------|
+| `text-left` | `text-align: left` |
+| `text-center` | `text-align: center` |
+| `text-right` | `text-align: right` |
+| `text-justify` | `text-align: justify` |
+| `text-start` | `text-align: start` |
+| `text-end` | `text-align: end` |
+
+```html
+<p class="text-center">Centered paragraph.</p>
+<p class="text-justify">Justified body copy for print-style layouts.</p>
+```
+
+<Tip>
+  Use `text-start` and `text-end` instead of `text-left` / `text-right` in internationalized applications — they respect the document's text direction.
+</Tip>
+
+## Text decoration
+
+| Class | CSS output |
+|-------|------------|
+| `underline` | `text-decoration-line: underline` |
+| `overline` | `text-decoration-line: overline` |
+| `line-through` | `text-decoration-line: line-through` |
+| `no-underline` | `text-decoration-line: none` |
+
+```html
+<a class="underline">Underlined link</a>
+<del class="line-through">Removed item</del>
+<a class="no-underline hover:underline">Hover to underline</a>
+```
+
+## Text transform
+
+| Class | CSS output |
+|-------|------------|
+| `uppercase` | `text-transform: uppercase` |
+| `lowercase` | `text-transform: lowercase` |
+| `capitalize` | `text-transform: capitalize` |
+| `normal-case` | `text-transform: none` |
+
+```html
+<span class="uppercase">label</span>        <!-- Renders as: LABEL -->
+<span class="capitalize">hello world</span> <!-- Renders as: Hello World -->
+<span class="normal-case SHOUTING">Reset</span>
+```
+
+## Font style
+
+| Class | CSS output |
+|-------|------------|
+| `italic` | `font-style: italic` |
+| `not-italic` | `font-style: normal` |
+
+```html
+<em class="italic">Emphasized text</em>
+<em class="not-italic">Override italic from parent</em>
+```
+
+## Font smoothing
+
+| Class | CSS output |
+|-------|------------|
+| `antialiased` | `-webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale` |
+
+```html
+<!-- Apply to the root element for global smoothing -->
+<body class="antialiased">...</body>
+```
+
+<Note>
+  `antialiased` improves rendering on macOS and high-DPI displays by using subpixel antialiasing. It has no effect on most Windows or Linux systems.
+</Note>
+
+## Text overflow
+
+### Truncate
+
+`truncate` combines three properties to clip overflowing text with an ellipsis:
+
+```css
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+```
+
+```html
+<!-- Truncate long text in a fixed-width container -->
+<p class="truncate w-48">This very long text will be cut off with an ellipsis.</p>
+```
+
+### Whitespace
+
+| Class | CSS output |
+|-------|------------|
+| `whitespace-normal` | `white-space: normal` |
+| `whitespace-nowrap` | `white-space: nowrap` |
+| `whitespace-pre` | `white-space: pre` |
+| `whitespace-pre-wrap` | `white-space: pre-wrap` |
+
+```html
+<!-- Prevent text from wrapping onto a new line -->
+<span class="whitespace-nowrap">One unbreakable line</span>
+
+<!-- Preserve whitespace and newlines (for code or poetry) -->
+<pre class="whitespace-pre">Line one
+Line two</pre>
+```
+
+## Word break
+
+| Class | CSS output |
+|-------|------------|
+| `break-normal` | `overflow-wrap: normal; word-break: normal` |
+| `break-words` | `overflow-wrap: break-word` |
+| `break-all` | `word-break: break-all` |
+
+```html
+<!-- Allow long URLs or strings to wrap at any character -->
+<p class="break-all">https://very-long-domain-name.example.com/deeply/nested/path</p>
+
+<!-- Break long words only when they would overflow -->
+<p class="break-words">Supercalifragilisticexpialidocious</p>
+```
+
+<Tip>
+  Prefer `break-words` for user-generated content like comments or messages. Use `break-all` sparingly — it breaks at every character boundary, which can harm readability for regular prose.
+</Tip>

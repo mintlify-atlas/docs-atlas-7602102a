@@ -1,0 +1,225 @@
+---
+title: Flexbox and Grid
+description: Flexbox and CSS Grid utilities for building one- and two-dimensional layouts.
+---
+
+## Display
+
+Use `flex`, `inline-flex`, `grid`, or `inline-grid` to enable flex or grid layout on a container. See the [Layout reference](/reference/layout) for the full display utilities table.
+
+## Flex direction
+
+Control the direction flex items are placed in a flex container.
+
+| Class | CSS |
+|---|---|
+| `flex-row` | `flex-direction: row` |
+| `flex-row-reverse` | `flex-direction: row-reverse` |
+| `flex-col` | `flex-direction: column` |
+| `flex-col-reverse` | `flex-direction: column-reverse` |
+
+## Flex wrap
+
+Control whether flex items can wrap onto multiple lines.
+
+| Class | CSS |
+|---|---|
+| `flex-wrap` | `flex-wrap: wrap` |
+| `flex-wrap-reverse` | `flex-wrap: wrap-reverse` |
+| `flex-nowrap` | `flex-wrap: nowrap` |
+
+## Flex sizing
+
+Control how a flex item grows and shrinks.
+
+| Class | CSS |
+|---|---|
+| `flex-1` | `flex: 1 1 0%` |
+| `flex-auto` | `flex: 1 1 auto` |
+| `flex-initial` | `flex: 0 1 auto` |
+| `flex-none` | `flex: none` |
+
+- `flex-1` — grows and shrinks, ignoring its initial size. Use to fill available space evenly.
+- `flex-auto` — grows and shrinks, but starts from its natural size.
+- `flex-initial` — can shrink but will not grow beyond its natural size (browser default).
+- `flex-none` — prevents the item from growing or shrinking.
+
+## Flex grow and shrink
+
+| Class | CSS |
+|---|---|
+| `flex-grow` | `flex-grow: 1` |
+| `flex-grow-0` | `flex-grow: 0` |
+| `flex-shrink` | `flex-shrink: 1` |
+| `flex-shrink-0` | `flex-shrink: 0` |
+
+Use `flex-shrink-0` to prevent an item (such as an icon or avatar) from being compressed when space is tight.
+
+## Align items
+
+Control how flex items are aligned along the cross axis of the container.
+
+| Class | CSS |
+|---|---|
+| `items-start` | `align-items: flex-start` |
+| `items-end` | `align-items: flex-end` |
+| `items-center` | `align-items: center` |
+| `items-baseline` | `align-items: baseline` |
+| `items-stretch` | `align-items: stretch` |
+
+## Justify content
+
+Control how flex or grid items are distributed along the main axis of the container.
+
+| Class | CSS |
+|---|---|
+| `justify-start` | `justify-content: flex-start` |
+| `justify-end` | `justify-content: flex-end` |
+| `justify-center` | `justify-content: center` |
+| `justify-between` | `justify-content: space-between` |
+| `justify-around` | `justify-content: space-around` |
+| `justify-evenly` | `justify-content: space-evenly` |
+
+## Align self
+
+Override the container's `align-items` for a single flex item.
+
+| Class | CSS |
+|---|---|
+| `self-auto` | `align-self: auto` |
+| `self-start` | `align-self: flex-start` |
+| `self-end` | `align-self: flex-end` |
+| `self-center` | `align-self: center` |
+| `self-stretch` | `align-self: stretch` |
+| `self-baseline` | `align-self: baseline` |
+
+## Grid template columns
+
+Define the number of columns in a grid container. Valid column counts are 1–12.
+
+| Class | CSS |
+|---|---|
+| `grid-cols-1` | `grid-template-columns: repeat(1, minmax(0, 1fr))` |
+| `grid-cols-2` | `grid-template-columns: repeat(2, minmax(0, 1fr))` |
+| `grid-cols-3` | `grid-template-columns: repeat(3, minmax(0, 1fr))` |
+| `grid-cols-4` | `grid-template-columns: repeat(4, minmax(0, 1fr))` |
+| `grid-cols-{n}` | `grid-template-columns: repeat(n, minmax(0, 1fr))` |
+| `grid-cols-none` | `grid-template-columns: none` |
+
+## Grid template rows
+
+Define the number of rows in a grid container.
+
+| Class | CSS |
+|---|---|
+| `grid-rows-1` | `grid-template-rows: repeat(1, minmax(0, 1fr))` |
+| `grid-rows-2` | `grid-template-rows: repeat(2, minmax(0, 1fr))` |
+| `grid-rows-{n}` | `grid-template-rows: repeat(n, minmax(0, 1fr))` |
+| `grid-rows-none` | `grid-template-rows: none` |
+
+## Column and row span
+
+Control how many columns or rows a grid item spans.
+
+| Class | CSS |
+|---|---|
+| `col-span-1` | `grid-column: span 1 / span 1` |
+| `col-span-2` | `grid-column: span 2 / span 2` |
+| `col-span-{n}` | `grid-column: span n / span n` |
+| `col-span-full` | `grid-column: 1 / -1` |
+| `row-span-1` | `grid-row: span 1 / span 1` |
+| `row-span-2` | `grid-row: span 2 / span 2` |
+| `row-span-{n}` | `grid-row: span n / span n` |
+| `row-span-full` | `grid-row: 1 / -1` |
+
+## Place items
+
+Shorthand for aligning items on both axes simultaneously (sets both `align-items` and `justify-items`).
+
+| Class | CSS |
+|---|---|
+| `place-items-start` | `place-items: start` |
+| `place-items-end` | `place-items: end` |
+| `place-items-center` | `place-items: center` |
+| `place-items-stretch` | `place-items: stretch` |
+
+## Place content
+
+Shorthand for distributing content on both axes (sets both `align-content` and `justify-content`).
+
+| Class | CSS |
+|---|---|
+| `place-content-start` | `place-content: start` |
+| `place-content-end` | `place-content: end` |
+| `place-content-center` | `place-content: center` |
+| `place-content-between` | `place-content: space-between` |
+| `place-content-around` | `place-content: space-around` |
+| `place-content-evenly` | `place-content: space-evenly` |
+| `place-content-stretch` | `place-content: stretch` |
+
+## Gap
+
+Control spacing between grid and flex items using the spacing scale.
+
+| Class | CSS property |
+|---|---|
+| `gap-{n}` | `gap` |
+| `gap-x-{n}` | `column-gap` |
+| `gap-y-{n}` | `row-gap` |
+
+Examples: `gap-4` sets a 1rem gap on both axes. `gap-x-8` sets a 2rem column gap only.
+
+## Examples
+
+```html flex navigation bar
+<nav class="flex items-center justify-between px-6 py-4 border-b">
+  <a href="/" class="font-bold text-lg flex-shrink-0">Logo</a>
+
+  <ul class="flex items-center gap-6">
+    <li><a href="/docs">Docs</a></li>
+    <li><a href="/blog">Blog</a></li>
+    <li><a href="/pricing">Pricing</a></li>
+  </ul>
+
+  <div class="flex items-center gap-3 flex-shrink-0">
+    <a href="/login">Log in</a>
+    <a href="/signup" class="btn">Sign up</a>
+  </div>
+</nav>
+```
+
+```html 3-column responsive card grid
+<section class="grid grid-cols-1 gap-6">
+  <!-- Stack to single column on narrow screens, -->
+  <!-- then override to 3 columns at larger breakpoints. -->
+  <div class="bg-surface rounded-lg border p-6">
+    <h3 class="font-semibold mb-2">Card one</h3>
+    <p class="text-muted">Description text for the first card.</p>
+  </div>
+  <div class="bg-surface rounded-lg border p-6">
+    <h3 class="font-semibold mb-2">Card two</h3>
+    <p class="text-muted">Description text for the second card.</p>
+  </div>
+  <div class="bg-surface rounded-lg border p-6">
+    <h3 class="font-semibold mb-2">Card three</h3>
+    <p class="text-muted">Description text for the third card.</p>
+  </div>
+</section>
+```
+
+```html full-width grid item spanning all columns
+<div class="grid grid-cols-3 gap-4">
+  <div class="col-span-full bg-primary-50 p-4 rounded">Full-width banner</div>
+  <div class="bg-surface p-4 rounded border">Col 1</div>
+  <div class="bg-surface p-4 rounded border">Col 2</div>
+  <div class="bg-surface p-4 rounded border">Col 3</div>
+</div>
+```
+
+```html centered flex card
+<div class="flex flex-col items-center justify-center min-h-64 gap-4 p-8">
+  <h2 class="text-xl font-bold">Empty state</h2>
+  <p class="text-muted">No items found. Create one to get started.</p>
+  <button class="btn">Create item</button>
+</div>
+```

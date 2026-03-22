@@ -1,0 +1,127 @@
+---
+title: Installation
+description: All methods for adding TSS to your project — CDN script tag, ESM module, npm package, or self-hosted file.
+---
+
+TSS can be loaded in any environment that has access to a DOM. Choose the integration method that fits your project.
+
+## CDN
+
+The fastest way to get started. TSS auto-initializes when the script loads — no setup code required.
+
+<CodeGroup>
+
+```html jsdelivr
+<!-- IIFE build — exposes global TSS object -->
+<script src="https://cdn.jsdelivr.net/npm/tss-css/dist/tss.min.js"></script>
+```
+
+```html unpkg
+<!-- IIFE build — exposes global TSS object -->
+<script src="https://unpkg.com/tss-css/dist/tss.min.js"></script>
+```
+
+```html esm (jsdelivr)
+<!-- ES module build — import TSS as a named default -->
+<script type="module">
+  import TSS from 'https://cdn.jsdelivr.net/npm/tss-css/dist/tss.esm.js';
+
+  // TSS has already auto-initialized.
+  // Use TSS.toggleDark() or TSS.refresh() as needed.
+  document.getElementById('theme-btn').addEventListener('click', () => {
+    TSS.toggleDark();
+  });
+</script>
+```
+
+</CodeGroup>
+
+<Note>
+  The IIFE build attaches a `TSS` global to `window`. The ESM build does not pollute the global scope — use the imported reference instead.
+</Note>
+
+## npm
+
+Install TSS as a dependency and import it into your JavaScript or TypeScript project.
+
+<CodeGroup>
+
+```bash npm
+npm install tss-css
+```
+
+```bash yarn
+yarn add tss-css
+```
+
+```bash pnpm
+pnpm add tss-css
+```
+
+</CodeGroup>
+
+Then import the default export:
+
+```javascript app.js
+import TSS from 'tss-css';
+
+// TSS auto-initializes when document is available.
+// Attach toggleDark to your theme button:
+document.getElementById('theme-btn').addEventListener('click', () => {
+  TSS.toggleDark();
+});
+```
+
+```typescript app.ts
+import TSS from 'tss-css';
+import type { ParseResult } from 'tss-css';
+
+// Parse a class to inspect the generated rule:
+const result: ParseResult | null = TSS.parse('px-8');
+console.log(result); // { selector: '.px-8', rules: 'padding-left: 2rem; padding-right: 2rem;' }
+```
+
+<Info>
+  TSS auto-initializes when `document` is available. If you import TSS in a server-side environment (such as SSR), initialization is skipped safely — no errors are thrown.
+</Info>
+
+## Manual / self-hosted
+
+Download `tss.min.js` from the CDN and serve it from your own infrastructure.
+
+```bash
+curl -o tss.min.js https://cdn.jsdelivr.net/npm/tss-css/dist/tss.min.js
+```
+
+Then reference it with a local path:
+
+```html
+<script src="/assets/tss.min.js"></script>
+```
+
+## How initialization works
+
+Regardless of how TSS is loaded, it follows the same initialization sequence:
+
+1. **Before paint** — `restoreThemePreference()` reads `localStorage` for the key `tss-theme` and applies it immediately, preventing a flash of the wrong theme.
+2. **On `DOMContentLoaded`** — TSS injects two `<style>` elements:
+   - `<style id="tss-theme">` — contains all CSS custom property definitions for both light and dark mode.
+   - `<style id="tss-utilities">` — receives generated utility rules as they are needed.
+3. **Initial scan** — TSS parses all class names present on `document.body` and writes the corresponding CSS.
+4. **MutationObserver** — TSS watches for `childList` changes (full subtree) and `class` attribute mutations, generating CSS for any new utility classes on the fly.
+
+## Theme persistence
+
+The active theme preference is stored in `localStorage` under the key `tss-theme`. The value is either `"dark"` or `"light"`. You can read or write it directly if you need to integrate with your own settings UI:
+
+```javascript
+// Read current preference
+const saved = localStorage.getItem('tss-theme'); // 'dark' | 'light' | null
+
+// TSS.toggleDark() writes this key automatically
+TSS.toggleDark();
+```
+
+<Tip>
+  To default new users to dark mode, set `localStorage.setItem('tss-theme', 'dark')` before the TSS script tag runs.
+</Tip>

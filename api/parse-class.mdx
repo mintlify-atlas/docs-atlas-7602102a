@@ -1,0 +1,142 @@
+---
+title: 'parseClass'
+description: 'Pure function that parses a single TSS class name into a CSS selector and rules object.'
+---
+
+## Signature
+
+```typescript
+parseClass(cls: string): ParseResult | null
+```
+
+## Overview
+
+`parseClass` is a pure function. It has no side effects and performs no DOM access. It takes a single class name string and returns a structured object describing the CSS that class would generate, or `null` if the class is not recognized by TSS.
+
+This makes it suitable for:
+
+- **Build tooling** — extract all classes from templates and generate static CSS ahead of time
+- **SSR pre-generation** — collect classes server-side and inject a `<style>` block before hydration
+- **Testing** — assert that a specific class produces the expected CSS output
+- **Linting / validation** — detect unrecognized class names in a codebase
+
+<Note>`TSS.parse` on the default export is an alias for this same function. They are identical.</Note>
+
+---
+
+## Parameters
+
+<ParamField path="cls" type="string" required>
+  A single TSS utility class name. The string is trimmed internally, so leading and trailing whitespace is ignored. Do not pass multiple space-separated classes — call `parseClass` once per class.
+</ParamField>
+
+---
+
+## Return value
+
+`ParseResult | null`
+
+Returns `null` for any class name TSS does not recognize.
+
+Returns a `ParseResult` object for recognized classes:
+
+<ResponseField name="selector" type="string" required>
+  The CSS selector string, including the leading `.`. Special characters in the class name are escaped so the selector is valid CSS. For example, `p-4` becomes `.p-4` and `text-2xl` becomes `.text-2xl`.
+</ResponseField>
+
+<ResponseField name="rules" type="Record<string, string>" required>
+  A plain object mapping CSS property names (kebab-case strings) to their values. A class that sets multiple properties returns multiple entries in this object.
+</ResponseField>
+
+---
+
+## Caching
+
+`parseClass` itself is stateless. The TSS runtime wraps it in a `generateRule()` function that checks an internal `_cache` Set before calling `parseClass`. If a class has already been injected into the stylesheet, `generateRule()` skips re-parsing and re-injecting it. When you call `parseClass` directly (outside the runtime), no caching occurs — every call runs the full parse.
+
+---
+
+## Examples
+
+### Spacing
+
+```javascript
+import { parseClass } from 'tss-css';
+
+parseClass('p-4');
+// → { selector: '.p-4', rules: { 'padding': '1rem' } }
+```
+
+### Typography
+
+```javascript
+parseClass('text-xl');
+// → { selector: '.text-xl', rules: { 'font-size': '1.25rem', 'line-height': '1.75rem' } }
+```
+
+### Layout
+
+```javascript
+parseClass('flex-col');
+// → { selector: '.flex-col', rules: { 'flex-direction': 'column' } }
+```
+
+### Static color
+
+```javascript
+parseClass('bg-blue-500');
+// → { selector: '.bg-blue-500', rules: { 'background-color': '#3b82f6' } }
+```
+
+### Theme color (CSS variable)
+
+```javascript
+parseClass('bg-accent');
+// → { selector: '.bg-accent', rules: { 'background-color': 'var(--tss-accent)' } }
+```
+
+### Border
+
+```javascript
+parseClass('border-2');
+// → { selector: '.border-2', rules: { 'border-width': '2px' } }
+```
+
+### Unrecognized class
+
+```javascript
+parseClass('unknown-xyz');
+// → null
+```
+
+---
+
+## Build tooling example
+
+Use `parseClass` in a build script to extract all classes from your HTML templates and generate a static stylesheet:
+
+```javascript
+import { parseClass } from 'tss-css';
+import { readFileSync, writeFileSync } from 'fs';
+
+const html = readFileSync('src/index.html', 'utf8');
+const classPattern = /class="([^"]+)"/g;
+const seen = new Set();
+const rules = [];
+
+for (const match of html.matchAll(classPattern)) {
+  for (const cls of match[1].split(/\s+/)) {
+    if (seen.has(cls)) continue;
+    seen.add(cls);
+    const result = parseClass(cls);
+    if (result) {
+      const props = Object.entries(result.rules)
+        .map(([k, v]) => `  ${k}: ${v};`)
+        .join('\n');
+      rules.push(`${result.selector} {\n${props}\n}`);
+    }
+  }
+}
+
+writeFileSync('dist/styles.css', rules.join('\n\n'));
+```

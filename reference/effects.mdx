@@ -1,0 +1,103 @@
+---
+title: 'Effects'
+description: 'Box shadows, opacity levels, and cursor styles for visual polish and interactivity.'
+---
+
+## Box shadows
+
+Apply `box-shadow` using the `shadow-{size}` utilities. The default `shadow` class applies a subtle two-layer shadow suitable for cards and dropdowns.
+
+| Class | box-shadow value | Use case |
+|---|---|---|
+| `shadow-sm` | `0 1px 2px 0 rgba(0,0,0,0.05)` | Subtle lift for buttons, inputs |
+| `shadow` | `0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1)` | Cards, panels, default elevation |
+| `shadow-md` | `0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1)` | Dropdowns, popovers |
+| `shadow-lg` | `0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)` | Modals, elevated surfaces |
+| `shadow-xl` | `0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)` | Floating elements, overlays |
+| `shadow-2xl` | `0 25px 50px -12px rgba(0,0,0,0.25)` | Deep shadows, hero sections |
+| `shadow-none` | `none` | Remove all shadows |
+
+### Example: card with hover shadow
+
+```html
+<div class="shadow-sm transition duration-200 ease-in-out hover:shadow-md">
+  Hover to deepen the shadow
+</div>
+```
+
+<Tip>Combine shadow utilities with `transition` and `duration-{ms}` to animate shadow changes on hover without any JavaScript.</Tip>
+
+---
+
+## Opacity
+
+Control element transparency with `opacity-{value}`. Values map directly to the CSS `opacity` property.
+
+| Class | opacity value |
+|---|---|
+| `opacity-0` | `0` |
+| `opacity-5` | `0.05` |
+| `opacity-10` | `0.1` |
+| `opacity-15` | `0.15` |
+| `opacity-20` | `0.2` |
+| `opacity-25` | `0.25` |
+| `opacity-30` | `0.3` |
+| `opacity-40` | `0.4` |
+| `opacity-50` | `0.5` |
+| `opacity-60` | `0.6` |
+| `opacity-70` | `0.7` |
+| `opacity-75` | `0.75` |
+| `opacity-80` | `0.8` |
+| `opacity-90` | `0.9` |
+| `opacity-95` | `0.95` |
+| `opacity-100` | `1` |
+
+<Note>`opacity` affects the entire element including its children. To make only a background or text color transparent, use a color token with an alpha channel instead.</Note>
+
+### Example: disabled state
+
+```html
+<button class="opacity-50" disabled>
+  Disabled button
+</button>
+```
+
+---
+
+## Cursor
+
+Set the mouse cursor style with `cursor-{value}`. These map directly to the CSS `cursor` property.
+
+| Class | Description |
+|---|---|
+| `cursor-auto` | Browser decides based on context |
+| `cursor-default` | Standard arrow pointer |
+| `cursor-pointer` | Hand pointer, used for clickable elements |
+| `cursor-wait` | Spinning wheel or hourglass, indicates loading |
+| `cursor-text` | I-beam, indicates selectable text |
+| `cursor-move` | Four-directional arrow, indicates draggable |
+| `cursor-help` | Arrow with question mark, indicates tooltip |
+| `cursor-not-allowed` | Circle with slash, indicates disabled action |
+| `cursor-none` | No cursor visible |
+| `cursor-context-menu` | Arrow with small menu indicator |
+| `cursor-progress` | Arrow with spinning wheel |
+| `cursor-cell` | Crosshair for spreadsheet-style cells |
+| `cursor-crosshair` | Precision crosshair |
+| `cursor-vertical-text` | Horizontal I-beam for vertical text |
+| `cursor-alias` | Arrow with shortcut indicator |
+| `cursor-copy` | Arrow with plus sign, indicates copy action |
+| `cursor-no-drop` | Indicates item cannot be dropped here |
+| `cursor-grab` | Open hand, indicates grabbable element |
+| `cursor-grabbing` | Closed hand, element is being dragged |
+| `cursor-col-resize` | Left-right resize for column borders |
+| `cursor-row-resize` | Up-down resize for row borders |
+| `cursor-zoom-in` | Magnifier with plus sign |
+| `cursor-zoom-out` | Magnifier with minus sign |
+
+### Example: interactive states
+
+```html
+<button class="cursor-pointer">Click me</button>
+<div class="cursor-grab">Drag me</div>
+<span class="cursor-not-allowed opacity-50">Unavailable</span>
+```

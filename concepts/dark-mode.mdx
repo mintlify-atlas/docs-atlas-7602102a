@@ -1,0 +1,132 @@
+---
+title: 'Dark mode'
+description: 'How TSS handles automatic and manual dark mode, persists the preference, and exposes a JavaScript toggle API.'
+---
+
+TSS ships three dark mode mechanisms that work together. You can rely on the automatic OS-level detection alone, give users a manual toggle, or combine both.
+
+## Mechanism 1: Automatic via media query
+
+When the browser's `prefers-color-scheme` media feature is `dark`, TSS applies dark-mode token values automatically:
+
+```css
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tss-base: #09090b;
+    --tss-body: #d1d5db;
+    --tss-heading: #f9fafb;
+    /* ... all 19 tokens ... */
+  }
+}
+```
+
+No JavaScript is involved. The switch happens at the CSS level the moment the OS preference changes.
+
+## Mechanism 2: Manual class on `<html>`
+
+Adding `class="dark"` to the `<html>` element forces dark mode regardless of the OS preference. Adding `class="light"` forces light mode.
+
+```html
+<!-- Force dark mode -->
+<html class="dark">
+
+<!-- Force light mode -->
+<html class="light">
+
+<!-- Follow OS preference (default) -->
+<html>
+```
+
+TSS generates both `html.dark { ... }` and `html.light { ... }` selectors, which have higher specificity than the `@media` block and therefore override it.
+
+<Info>
+  **Priority order** (highest to lowest):
+  1. `html.dark` or `html.light` — manual class override
+  2. `@media (prefers-color-scheme: dark)` — OS preference
+  3. `:root` light mode defaults
+</Info>
+
+## Mechanism 3: JavaScript toggle
+
+`TSS.toggleDark()` toggles between `dark` and `light` classes on the `<html>` element and persists the choice to `localStorage`:
+
+```javascript
+// Returns true if dark mode is now active, false if light mode is now active
+const isDark = TSS.toggleDark();
+```
+
+Internal implementation:
+
+```javascript
+function toggleDark() {
+  const html = document.documentElement;
+  const isDark = html.classList.contains('dark');
+  if (isDark) {
+    html.classList.remove('dark');
+    html.classList.add('light');
+  } else {
+    html.classList.remove('light');
+    html.classList.add('dark');
+  }
+  try {
+    localStorage.setItem('tss-theme', isDark ? 'light' : 'dark');
+  } catch (e) {}
+  return !isDark;
+}
+```
+
+## localStorage persistence
+
+The user's choice is stored under the `tss-theme` key in `localStorage` with the value `"dark"` or `"light"`. TSS reads this key during `restoreThemePreference()`, which runs synchronously when the script is parsed — before the DOM is ready.
+
+```javascript
+function restoreThemePreference() {
+  try {
+    const saved = localStorage.getItem('tss-theme');
+    if (saved === 'dark') document.documentElement.classList.add('dark');
+    else if (saved === 'light') document.documentElement.classList.add('light');
+  } catch (e) {}
+}
+```
+
+Running before the DOM is painted prevents a flash of the wrong color scheme. The `try/catch` blocks guard against environments where `localStorage` is unavailable (private browsing, sandboxed iframes).
+
+<Tip>
+  Load the TSS `<script>` tag in `<head>` rather than at the end of `<body>` to ensure `restoreThemePreference()` runs before any content renders.
+</Tip>
+
+## Toggle button example
+
+```html
+<button id="theme-toggle" class="cursor-pointer p-2 rounded-md bg-muted text-heading">
+  Toggle dark mode
+</button>
+
+<script>
+  document.getElementById('theme-toggle').addEventListener('click', function () {
+    const isDark = TSS.toggleDark();
+    this.textContent = isDark ? 'Switch to light mode' : 'Switch to dark mode';
+  });
+</script>
+```
+
+## Defaulting to dark mode
+
+To make dark mode the default for users who have not yet set a preference, add the `dark` class to `<html>` in your server-rendered HTML. A returning visitor with a saved `light` preference will have the class overridden by `restoreThemePreference()` before paint.
+
+```html
+<!DOCTYPE html>
+<html class="dark">
+<head>
+  <script src="tss.min.js"></script>
+  <!-- restoreThemePreference() runs here, overriding 'dark' with 'light' for users who chose light -->
+</head>
+<body>
+  ...
+</body>
+</html>
+```
+
+<Warning>
+  Do not rely solely on server-side session state to set the `dark` or `light` class. The class must be present at the time the script runs, which on a static site means it must be in the initial HTML.
+</Warning>

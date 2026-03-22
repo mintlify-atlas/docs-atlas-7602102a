@@ -1,0 +1,137 @@
+---
+title: 'TSS object'
+description: 'The TSS default export — version, refresh, toggleDark, and parse.'
+---
+
+The `TSS` object is the main entry point for the TSS library. It exposes the library version and three methods for controlling the runtime.
+
+## Accessing TSS
+
+**Via CDN (browser global):**
+
+```html
+<script src="https://unpkg.com/tss-css"></script>
+<script>
+  console.log(TSS.version); // '1.0.0'
+</script>
+```
+
+**Via npm (ES module import):**
+
+```javascript
+import TSS from 'tss-css';
+console.log(TSS.version); // '1.0.0'
+```
+
+---
+
+## TSS.version
+
+A string identifying the current library version.
+
+```javascript
+TSS.version; // '1.0.0'
+```
+
+---
+
+## TSS.refresh()
+
+Re-scans `document.body` and synchronously flushes any pending CSS rules.
+
+```javascript
+TSS.refresh(); // returns undefined
+```
+
+Calling `refresh()` is equivalent to:
+
+```javascript
+scanNode(document.body);
+flushPending();
+```
+
+TSS observes the DOM automatically using a `MutationObserver`. However, when you inject HTML programmatically outside of a normal DOM mutation (for example, by setting `innerHTML` directly in a timing edge case), call `refresh()` to ensure the new classes are picked up immediately.
+
+```javascript
+document.querySelector('#container').innerHTML = '<div class="p-4 bg-blue-500">New content</div>';
+TSS.refresh(); // ensures p-4 and bg-blue-500 are injected now
+```
+
+<Note>`refresh()` flushes synchronously — not via `requestAnimationFrame`. Call it directly before any code that reads layout or computed styles on newly injected elements.</Note>
+
+---
+
+## TSS.toggleDark()
+
+Toggles dark mode on the `<html>` element and persists the preference to `localStorage`.
+
+```javascript
+const isDark = TSS.toggleDark(); // returns boolean
+```
+
+**Behavior:**
+
+1. Checks whether `<html>` has the `dark` class.
+2. If dark: removes `dark`, adds `light`.
+3. If light: removes `light`, adds `dark`.
+4. Saves the new theme to `localStorage` under the key `tss-theme`.
+5. Returns `true` if the result is dark mode, `false` if light mode.
+
+```javascript
+const button = document.querySelector('#theme-toggle');
+button.addEventListener('click', () => {
+  const isDark = TSS.toggleDark();
+  button.textContent = isDark ? 'Switch to light' : 'Switch to dark';
+});
+```
+
+<ParamField path="return value" type="boolean">
+  `true` if the document is now in dark mode. `false` if it is now in light mode.
+</ParamField>
+
+<Tip>The `localStorage` key is `tss-theme`. Read it on page load to restore the user's preference before injecting content, preventing a flash of the wrong theme.</Tip>
+
+```javascript
+// Restore preference on load
+const saved = localStorage.getItem('tss-theme');
+if (saved === 'dark') {
+  document.documentElement.classList.add('dark');
+} else if (saved === 'light') {
+  document.documentElement.classList.add('light');
+}
+```
+
+---
+
+## TSS.parse()
+
+Parses a single TSS class name and returns its CSS selector and rules, or `null` if unrecognized.
+
+```javascript
+TSS.parse(className);
+```
+
+<ParamField path="className" type="string" required>
+  A single TSS utility class name. Do not include the leading dot.
+</ParamField>
+
+**Return value:** `{ selector: string, rules: Record<string, string> } | null`
+
+```javascript
+TSS.parse('p-4');
+// → { selector: '.p-4', rules: { 'padding': '1rem' } }
+
+TSS.parse('text-xl');
+// → { selector: '.text-xl', rules: { 'font-size': '1.25rem', 'line-height': '1.75rem' } }
+
+TSS.parse('flex-col');
+// → { selector: '.flex-col', rules: { 'flex-direction': 'column' } }
+
+TSS.parse('bg-blue-500');
+// → { selector: '.bg-blue-500', rules: { 'background-color': '#3b82f6' } }
+
+TSS.parse('unknown-class');
+// → null
+```
+
+<Note>`TSS.parse` is the same function as the named `parseClass` export from `tss-css`. See the [parseClass reference](/api/parse-class) for full documentation including all worked examples.</Note>

@@ -1,0 +1,230 @@
+---
+title: Layout
+description: Display, position, overflow, z-index, and other layout utilities for controlling how elements are placed on the page.
+---
+
+## Display
+
+Control the CSS `display` property of an element.
+
+| Class | CSS |
+|---|---|
+| `block` | `display: block` |
+| `inline-block` | `display: inline-block` |
+| `inline` | `display: inline` |
+| `flex` | `display: flex` |
+| `inline-flex` | `display: inline-flex` |
+| `grid` | `display: grid` |
+| `inline-grid` | `display: inline-grid` |
+| `hidden` | `display: none` |
+| `table` | `display: table` |
+| `table-row` | `display: table-row` |
+| `table-cell` | `display: table-cell` |
+| `contents` | `display: contents` |
+
+## Position
+
+Control how an element is positioned in the document flow.
+
+| Class | CSS | Common use case |
+|---|---|---|
+| `static` | `position: static` | Default document flow |
+| `relative` | `position: relative` | Offset from normal position; creates stacking context |
+| `absolute` | `position: absolute` | Removed from flow, positioned relative to nearest non-static ancestor |
+| `fixed` | `position: fixed` | Positioned relative to the viewport (sticky navbars, modals) |
+| `sticky` | `position: sticky` | Acts like `relative` until it hits a scroll threshold (sticky sidebars) |
+
+```html fixed navbar
+<header class="fixed top-0 left-0 right-0 z-50 bg-surface border-b">
+  <!-- navbar content -->
+</header>
+<main class="pt-16">
+  <!-- page content offset to clear the navbar -->
+</main>
+```
+
+```html absolute overlay
+<div class="relative">
+  <img src="/photo.jpg" alt="Photo" class="block w-full" />
+  <div class="absolute inset-0 bg-black opacity-50"></div>
+  <span class="absolute bottom-4 left-4 text-white">Caption</span>
+</div>
+```
+
+```html sticky sidebar
+<aside class="sticky top-16 h-screen overflow-y-auto">
+  <!-- sidebar content -->
+</aside>
+```
+
+## Inset / offset
+
+Control `top`, `right`, `bottom`, `left`, and shorthand `inset` properties using the spacing scale.
+
+| Prefix | Properties affected |
+|---|---|
+| `inset-{n}` | `top`, `right`, `bottom`, `left` |
+| `inset-x-{n}` | `right`, `left` |
+| `inset-y-{n}` | `top`, `bottom` |
+| `top-{n}` | `top` |
+| `right-{n}` | `right` |
+| `bottom-{n}` | `bottom` |
+| `left-{n}` | `left` |
+
+All prefixes accept any value from the spacing scale. Prepend `-` for negative values.
+
+| Example class | CSS output |
+|---|---|
+| `top-0` | `top: 0` |
+| `top-4` | `top: 1rem` |
+| `-top-2` | `top: -0.5rem` |
+| `inset-0` | `top: 0; right: 0; bottom: 0; left: 0` |
+| `inset-x-4` | `right: 1rem; left: 1rem` |
+| `right-full` | `right: 100%` |
+| `bottom-auto` | `bottom: auto` |
+
+<Tip>
+Use `inset-0` on an `absolute` child inside a `relative` parent to make it fill the parent completely.
+</Tip>
+
+## Z-index
+
+Control the stacking order of positioned elements with `z-{value}`.
+
+| Class | CSS |
+|---|---|
+| `z-0` | `z-index: 0` |
+| `z-10` | `z-index: 10` |
+| `z-20` | `z-index: 20` |
+| `z-30` | `z-index: 30` |
+| `z-40` | `z-index: 40` |
+| `z-50` | `z-index: 50` |
+| `z-auto` | `z-index: auto` |
+
+## Overflow
+
+Control how content that exceeds an element's bounds is handled.
+
+| Class | CSS |
+|---|---|
+| `overflow-auto` | `overflow: auto` |
+| `overflow-hidden` | `overflow: hidden` |
+| `overflow-clip` | `overflow: clip` |
+| `overflow-visible` | `overflow: visible` |
+| `overflow-scroll` | `overflow: scroll` |
+| `overflow-x-auto` | `overflow-x: auto` |
+| `overflow-x-hidden` | `overflow-x: hidden` |
+| `overflow-x-clip` | `overflow-x: clip` |
+| `overflow-x-visible` | `overflow-x: visible` |
+| `overflow-x-scroll` | `overflow-x: scroll` |
+| `overflow-y-auto` | `overflow-y: auto` |
+| `overflow-y-hidden` | `overflow-y: hidden` |
+| `overflow-y-clip` | `overflow-y: clip` |
+| `overflow-y-visible` | `overflow-y: visible` |
+| `overflow-y-scroll` | `overflow-y: scroll` |
+
+## Visibility and accessibility
+
+### Screen reader only
+
+Hide an element visually while keeping it accessible to assistive technologies.
+
+| Class | CSS |
+|---|---|
+| `sr-only` | `position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border-width: 0` |
+| `not-sr-only` | `position: static; width: auto; height: auto; padding: 0; margin: 0; overflow: visible; clip: auto; white-space: normal` |
+
+```html sr-only example
+<button class="flex items-center gap-2">
+  <svg aria-hidden="true"><!-- icon --></svg>
+  <span class="sr-only">Close menu</span>
+</button>
+```
+
+## Pointer events
+
+Control whether an element responds to mouse and touch interactions.
+
+| Class | CSS |
+|---|---|
+| `pointer-events-none` | `pointer-events: none` |
+| `pointer-events-auto` | `pointer-events: auto` |
+
+Use `pointer-events-none` on overlays, disabled states, or decorative elements that should not intercept clicks.
+
+## User select
+
+Control whether text in an element can be selected by the user.
+
+| Class | CSS |
+|---|---|
+| `select-none` | `user-select: none` |
+| `select-text` | `user-select: text` |
+| `select-all` | `user-select: all` |
+| `select-auto` | `user-select: auto` |
+
+## Resize
+
+Control which axes a user can resize a `textarea` or other resizable element.
+
+| Class | CSS |
+|---|---|
+| `resize-none` | `resize: none` |
+| `resize` | `resize: both` |
+| `resize-x` | `resize: horizontal` |
+| `resize-y` | `resize: vertical` |
+
+## Object fit
+
+Control how a replaced element (`<img>`, `<video>`) should be resized within its container.
+
+| Class | CSS |
+|---|---|
+| `object-cover` | `object-fit: cover` |
+| `object-contain` | `object-fit: contain` |
+| `object-fill` | `object-fit: fill` |
+| `object-none` | `object-fit: none` |
+
+```html cover image
+<div class="relative w-64 h-40 overflow-hidden rounded-lg">
+  <img
+    src="/photo.jpg"
+    alt="Landscape photo"
+    class="absolute inset-0 w-full h-full object-cover"
+  />
+</div>
+```
+
+## Border collapse
+
+| Class | CSS |
+|---|---|
+| `border-collapse` | `border-collapse: collapse` |
+| `border-separate` | `border-collapse: separate` |
+
+## Common patterns
+
+```html centered content with mx-auto
+<div class="max-w-4xl mx-auto px-4">
+  <h1 class="text-2xl font-bold">Page title</h1>
+  <p>Centered content block with horizontal padding.</p>
+</div>
+```
+
+```html sticky header + scrollable page
+<div class="min-h-screen flex flex-col">
+  <header class="sticky top-0 z-40 bg-surface border-b">
+    <!-- navigation -->
+  </header>
+  <main class="flex-1 overflow-y-auto">
+    <!-- scrollable content -->
+  </main>
+</div>
+```
+
+```html absolute badge on an avatar
+<div class="relative inline-block">
+  <img src="/avatar.jpg" alt="User avatar" class="w-10 h-10 rounded-full" />
+  <span class="absolute bottom-0 right-0 w-3 h-3 bg-success rounded-full border-2 border-surface"></span>
+</div>
+```

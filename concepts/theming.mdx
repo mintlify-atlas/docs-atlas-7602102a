@@ -1,0 +1,124 @@
+---
+title: 'Theming'
+description: 'How TSS injects theme CSS variables, provides a base reset, and lets you override any token to match your brand.'
+---
+
+TSS manages all styling through two `<style>` elements that it creates and owns in `<head>`. You never need to maintain a CSS file or run a build to change how your site looks.
+
+## The two style elements
+
+| Element ID | Purpose |
+|---|---|
+| `#tss-theme` | CSS custom properties for the design system (colors, tokens). Also contains the base reset and `html`/`body` defaults. |
+| `#tss-utilities` | Generated utility class rules, appended one rule at a time as new classes are encountered. |
+
+Keeping them separate means theme overrides never invalidate the utility cache, and the utility sheet never grows stale entries when you change a token value.
+
+## Base reset
+
+The `#tss-theme` sheet opens with a universal box-sizing reset and zeroed margins/padding:
+
+```css
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+```
+
+This is applied unconditionally. You do not need to include a separate CSS reset.
+
+## System font stack and body defaults
+
+Immediately after the reset, TSS sets defaults on `html` and `body`:
+
+```css
+html, body {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+               "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: var(--tss-base);
+  color: var(--tss-body);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+```
+
+The `transition` ensures that switching between light and dark mode is smooth rather than an instant flash.
+
+<Tip>
+  Because `background-color` defaults to `var(--tss-base)` and `color` to `var(--tss-body)`, you get a reasonable page background and readable body text for free without writing any CSS.
+</Tip>
+
+## Semantic color custom properties
+
+All semantic tokens are emitted as CSS custom properties under the `--tss-` namespace. For example:
+
+```css
+:root {
+  --tss-primary: #ffffff;
+  --tss-surface: #ffffff;
+  --tss-heading: #111827;
+  --tss-body: #374151;
+  --tss-accent: #4f46e5;
+  /* ... all 19 tokens ... */
+}
+```
+
+In dark mode, a `@media (prefers-color-scheme: dark)` block and an `html.dark` selector redefine the same properties with dark-appropriate values. See [Dark mode](/concepts/dark-mode) for the full details.
+
+## Using semantic tokens in utility classes
+
+Any class that accepts a color — `bg-`, `text-`, `border-` — resolves semantic token names directly:
+
+```html
+<div class="bg-surface text-body border border-outline rounded-lg p-6">
+  <h2 class="text-heading font-semibold">Title</h2>
+  <p class="text-subtle text-sm">Supporting text</p>
+  <a class="text-link underline">Link</a>
+</div>
+```
+
+Because the values are CSS custom properties, the same class works correctly in both light and dark mode — no conditional rendering required.
+
+## Overriding tokens
+
+To customize any design token, redefine its CSS custom property in your own stylesheet, loaded after TSS:
+
+```css
+:root {
+  --tss-accent: #your-brand-color;
+  --tss-link: #your-link-color;
+}
+```
+
+You can also override tokens per-component or per-section:
+
+```css
+.marketing-hero {
+  --tss-heading: #ffffff;
+  --tss-body: rgba(255, 255, 255, 0.8);
+}
+```
+
+<Note>
+  TSS writes its custom properties on `:root`. A rule with any selector that is more specific, or that appears later in the cascade, will win. Standard CSS specificity applies.
+</Note>
+
+### Overriding for dark mode only
+
+```css
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tss-accent: #818cf8;
+  }
+}
+
+html.dark {
+  --tss-accent: #818cf8;
+}
+```
+
+Use both blocks if you want your override to apply regardless of whether dark mode was triggered automatically or manually.
+
+## Complete token list
+
+For the full table of all 19 semantic tokens with their light and dark values, see [Semantic colors](/concepts/semantic-colors).

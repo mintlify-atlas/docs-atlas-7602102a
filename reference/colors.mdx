@@ -1,0 +1,177 @@
+---
+title: 'Colors'
+description: 'Palette colors, semantic tokens, and color utility prefixes for backgrounds, text, and borders.'
+---
+
+TSS provides two color systems: a **palette** of named colors with numeric shades, and **semantic tokens** that map to CSS custom properties for theming. Both systems work with the same utility prefixes.
+
+## Color utility prefixes
+
+Colors are applied through three utility prefixes:
+
+| Prefix | CSS property | Example |
+|--------|-------------|--------|
+| `bg-{color}` | `background-color` | `bg-blue-500` |
+| `text-{color}` | `color` | `text-slate-700` |
+| `border-{color}` | `border-color` | `border-emerald-300` |
+
+## Palette colors
+
+The palette contains 19 color families, each with 11 shades: `50`, `100`, `200`, `300`, `400`, `500`, `600`, `700`, `800`, `900`, `950`.
+
+**Available color families:**
+
+<Tabs>
+  <Tab title="Neutrals">
+    `slate`, `gray`, `zinc`
+  </Tab>
+  <Tab title="Warm">
+    `red`, `orange`, `amber`, `yellow`
+  </Tab>
+  <Tab title="Green">
+    `lime`, `green`, `emerald`, `teal`
+  </Tab>
+  <Tab title="Blue">
+    `cyan`, `sky`, `blue`, `indigo`
+  </Tab>
+  <Tab title="Purple/Pink">
+    `violet`, `purple`, `pink`, `rose`
+  </Tab>
+</Tabs>
+
+### Shade scale
+
+Shades range from `50` (lightest) to `950` (darkest). Lower numbers are near-white tints; higher numbers are near-black shades.
+
+| Shade | Tone |
+|-------|------|
+| `50` | Lightest tint |
+| `100`–`200` | Very light |
+| `300`–`400` | Light / muted |
+| `500` | Mid / brand |
+| `600`–`700` | Dark |
+| `800`–`900` | Very dark |
+| `950` | Darkest shade |
+
+### Usage examples
+
+```html
+<!-- Mid-tone blue background -->
+<div class="bg-blue-500">...</div>
+
+<!-- Light red text -->
+<span class="text-red-300">Error hint</span>
+
+<!-- Dark emerald border -->
+<input class="border border-emerald-600" />
+
+<!-- Very light slate background with dark slate text -->
+<div class="bg-slate-50 text-slate-900">...</div>
+```
+
+### Special palette values
+
+In addition to the 19 color families, the following keywords are available:
+
+| Keyword | Resolves to |
+|---------|-------------|
+| `white` | `#ffffff` |
+| `black` | `#000000` |
+| `transparent` | `transparent` |
+| `inherit` | `inherit` |
+| `current` | `currentColor` |
+
+```html
+<div class="bg-white text-black">...</div>
+<div class="border border-transparent">...</div>
+<svg class="text-current fill-current">...</svg>
+```
+
+## Semantic tokens
+
+Semantic tokens are named color roles that map to CSS custom properties (`var(--tss-{token})`). They allow you to theme your UI by overriding the variables without changing class names.
+
+### Full token table
+
+| Token | CSS variable | Intended use |
+|-------|-------------|-------------|
+| `primary` | `var(--tss-primary)` | Primary brand actions and interactive elements |
+| `secondary` | `var(--tss-secondary)` | Secondary actions and accents |
+| `tertiary` | `var(--tss-tertiary)` | Tertiary/supporting accents |
+| `surface` | `var(--tss-surface)` | Card and panel backgrounds |
+| `base` | `var(--tss-base)` | Page or app background |
+| `inverse` | `var(--tss-inverse)` | Inverse/contrast surfaces |
+| `muted` | `var(--tss-muted)` | Muted backgrounds or de-emphasized areas |
+| `heading` | `var(--tss-heading)` | Heading text color |
+| `body` | `var(--tss-body)` | Body text color |
+| `subtle` | `var(--tss-subtle)` | Subtle/secondary text |
+| `disabled` | `var(--tss-disabled)` | Disabled state color |
+| `link` | `var(--tss-link)` | Link text color |
+| `outline` | `var(--tss-outline)` | Focus outline color |
+| `divider` | `var(--tss-divider)` | Horizontal rules and dividers |
+| `ring` | `var(--tss-ring)` | Focus ring color |
+| `success` | `var(--tss-success)` | Success state |
+| `warning` | `var(--tss-warning)` | Warning state |
+| `danger` | `var(--tss-danger)` | Destructive/error state |
+| `info` | `var(--tss-info)` | Informational state |
+| `accent` | `var(--tss-accent)` | Highlight or decorative accent |
+
+### Usage examples
+
+```html
+<!-- Background using semantic token -->
+<div class="bg-surface">...</div>
+
+<!-- Text using semantic token -->
+<p class="text-body">Paragraph text</p>
+<h1 class="text-heading">Page title</h1>
+
+<!-- Danger state button -->
+<button class="bg-danger text-white">Delete</button>
+
+<!-- Divider -->
+<hr class="border-divider" />
+```
+
+### Overriding semantic tokens
+
+Define or override the CSS custom properties in your global stylesheet to apply custom theme values:
+
+```css
+:root {
+  --tss-primary: #6366f1;
+  --tss-body: #1e293b;
+  --tss-surface: #ffffff;
+  --tss-divider: #e2e8f0;
+}
+
+/* Dark mode override */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --tss-primary: #818cf8;
+    --tss-body: #e2e8f0;
+    --tss-surface: #1e293b;
+    --tss-divider: #334155;
+  }
+}
+```
+
+<Tip>
+  Use semantic tokens for all UI component colors. Reserve palette shades for one-off overrides or illustrations. This makes dark mode and rebranding significantly simpler.
+</Tip>
+
+## Color resolution order
+
+When TSS resolves a color value (e.g., `bg-primary` or `text-blue-500`), it follows this priority order:
+
+1. **Semantic token** — if the key matches a semantic token name (e.g., `primary`), resolves to `var(--tss-{key})`
+2. **`white`** — resolves to `#ffffff`
+3. **`black`** — resolves to `#000000`
+4. **`transparent`** — resolves to `transparent`
+5. **`inherit`** — resolves to `inherit`
+6. **`current`** — resolves to `currentColor`
+7. **Palette shade** — `{color}-{shade}` format (e.g., `blue-500`) resolves to the corresponding hex value
+
+<Note>
+  Semantic tokens take precedence over palette colors. If you name a CSS variable the same as a color family (e.g., `--tss-red`), it will override `bg-red-*` lookups for the base key but not the shade variants.
+</Note>
